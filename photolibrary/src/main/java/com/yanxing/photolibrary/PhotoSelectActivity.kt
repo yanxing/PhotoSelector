@@ -13,6 +13,7 @@ class PhotoSelectActivity :AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_select)
+
         intent.apply {
             val fragment=PhotoSelectFragment()
             val bundle=Bundle()
@@ -24,9 +25,6 @@ class PhotoSelectActivity :AppCompatActivity(){
         }
     }
 
-    /**
-     * 添加Fragment
-     */
     private fun add(fragment: Fragment, id: Int) {
         val tag = fragment.javaClass.toString()
         supportFragmentManager

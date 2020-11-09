@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
+import android.widget.TextView
+import androidx.collection.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_photo_select.*
 
 /**
@@ -37,15 +40,29 @@ class PhotoSelectFragment:Fragment() {
      */
     private var limitVideoDuration=12
 
+    /**
+     * 当前展示的图片视频
+     */
     private val photoList=ArrayList<Photo>()
+    private val photoFolderList=ArrayMap<String, PhotoFolder>()
 
     private val photoAdapter by lazy {
         photoRecyclerView.layoutManager=GridLayoutManager(activity,4)
         object :RecyclerViewAdapter<Photo>(photoList,R.layout.item_photo){
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
-
-
+                mDataList[position].apply {
+                    Glide.with(this@PhotoSelectFragment).load(path).into(holder.findViewById(R.id.image))
+                    if (type==2){
+                        //视频，显示时长
+                        holder.findViewById<TextView>(R.id.duration).apply {
+                            visibility=View.VISIBLE
+                            text= formatDuration(duration)
+                        }
+                    }else{
+                        holder.findViewById<TextView>(R.id.duration).visibility=View.GONE
+                    }
+                }
 
             }
         }

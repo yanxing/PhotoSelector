@@ -25,3 +25,29 @@ const val LOAD_MEDIA_TYPE="media_type"
  */
 const val LIMIT_VIDEO_DURATION="video_duration"
 
+
+/**
+ * 格式化时间，单位为秒
+ */
+fun formatDuration(duration:Int):String{
+    if (duration<10){
+        return "0:0$duration"
+    }
+    if (duration<60){
+        return "0:$duration"
+    }
+    val m=duration/60
+    if (m<60){
+        return if (m<10){
+            "0"+m.toString()+":"+duration%60
+        }else{
+            m.toString()+":"+duration%60
+        }
+    }
+    val h=duration/3600
+    if (h<24){
+        return h.toString()+":"+m+":"+m%60
+    }
+    return duration.toString()
+}
+
