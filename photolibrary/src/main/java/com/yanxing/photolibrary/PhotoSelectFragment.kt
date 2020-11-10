@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.collection.ArrayMap
+import android.util.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -48,11 +48,10 @@ class PhotoSelectFragment:Fragment() {
     private val photoList=ArrayList<Photo>()
     private val queryThread = HandlerThread("query_thread")
     private lateinit var queryHandler:Handler
-
     /**
      * 全部图片
      */
-    private val photoFolderList=ArrayMap<String, PhotoFolder>()
+    private var photoFolderMap=ArrayMap<String, PhotoFolder>()
 
     private val photoAdapter by lazy {
         photoRecyclerView.layoutManager=GridLayoutManager(activity, 4)
@@ -105,10 +104,17 @@ class PhotoSelectFragment:Fragment() {
         queryHandler=object :Handler(queryThread.looper){
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
+                activity?.let {
+                    photoFolderMap= getPhotos(it,loadMediaType)
+                    for (photoFolder in photoFolderMap){
+                        if (photoFolder.value.isSelected){
+
+                        }
+                    }
+                }
 
             }
         }
-
     }
 
 
