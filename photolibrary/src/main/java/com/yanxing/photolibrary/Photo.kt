@@ -11,4 +11,15 @@ data class Photo(
     //1图片，2视频，
     var type:Int=1,
     //视频时长
-    var duration:Int=0)
+    var duration:Int=0,
+    /**
+     * 修改时间,没有就用创建时间
+     */
+    var time:Long=0):Comparable<Photo>{
+
+    //按照时间排序
+    override fun compareTo(other: Photo): Int {
+        return (this.time-other.time).toInt()
+    }
+
+}

@@ -2,10 +2,12 @@ package com.yanxing.photolibrary
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
 import android.widget.TextView
 import androidx.collection.ArrayMap
 import androidx.fragment.app.Fragment
@@ -44,11 +46,17 @@ class PhotoSelectFragment:Fragment() {
      * 当前展示的图片视频
      */
     private val photoList=ArrayList<Photo>()
+    private val queryThread = HandlerThread("query_thread")
+    private lateinit var queryHandler:Handler
+
+    /**
+     * 全部图片
+     */
     private val photoFolderList=ArrayMap<String, PhotoFolder>()
 
     private val photoAdapter by lazy {
-        photoRecyclerView.layoutManager=GridLayoutManager(activity,4)
-        object :RecyclerViewAdapter<Photo>(photoList,R.layout.item_photo){
+        photoRecyclerView.layoutManager=GridLayoutManager(activity, 4)
+        object :RecyclerViewAdapter<Photo>(photoList, R.layout.item_photo){
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
                 mDataList[position].apply {
@@ -68,7 +76,11 @@ class PhotoSelectFragment:Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.fragment_photo_select, container, false)
     }
@@ -77,13 +89,31 @@ class PhotoSelectFragment:Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-
-
     }
 
     private fun initView(){
         cancel.setOnClickListener { activity?.finish() }
+        photoRecyclerView.adapter=photoAdapter
+        progressBar.show()
     }
+
+    /**
+     * 查询本地图片和视频
+     */
+    private fun getPhotoVideo(){
+        queryThread.start()
+        queryHandler=object :Handler(queryThread.looper){
+            override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
+
+            }
+        }
+
+    }
+
+
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
