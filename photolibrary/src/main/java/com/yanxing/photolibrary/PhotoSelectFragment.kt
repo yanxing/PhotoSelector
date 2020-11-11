@@ -14,10 +14,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
-import com.yanxing.photolibrary.model.Photo
-import com.yanxing.photolibrary.model.PhotoFolder
-import com.yanxing.photolibrary.model.formatDuration
-import com.yanxing.photolibrary.model.showToast
+import com.yanxing.photolibrary.model.*
 import com.yanxing.photolibrary.util.PermissionUtil
 import com.yanxing.photolibrary.util.getPhotos
 import kotlinx.android.synthetic.main.fragment_photo_select.*
@@ -62,12 +59,14 @@ class PhotoSelectFragment:Fragment() {
     private var photoFolderList=ArrayList<PhotoFolder>()
 
     private val photoAdapter by lazy {
+        val width=activity?.let { (getScreenMetrics(it).widthPixels- dp2px(it,2)*5)/4 }
         photoRecyclerView.layoutManager=GridLayoutManager(activity, 4)
         object :RecyclerViewAdapter<Photo>(photoList, R.layout.item_photo){
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
                 mDataList[position].apply {
-                    Glide.with(this@PhotoSelectFragment).load(path).into(holder.findViewById(R.id.image))
+                    Glide.with(this@PhotoSelectFragment).load(path).override(width!!,width)
+                        .into(holder.findViewById(R.id.image))
                     if (type==2){
                         //视频，显示时长
                         holder.findViewById<TextView>(R.id.duration).apply {
@@ -78,7 +77,6 @@ class PhotoSelectFragment:Fragment() {
                         holder.findViewById<TextView>(R.id.duration).visibility=View.GONE
                     }
                 }
-
             }
         }
     }
@@ -97,17 +95,24 @@ class PhotoSelectFragment:Fragment() {
     private fun initView(){
         cancel.setOnClickListener { activity?.finish() }
         photoRecyclerView.adapter=photoAdapter
+        arguments?.apply {
+            showCamera=getBoolean(SHOW_CAMERA,true)
+            selectMultiple=getBoolean(SELECT_MODE,false)
+            defaultNumber=getInt(MAX_NUM,9)
+            loadMediaType=getInt(LOAD_MEDIA_TYPE,1)
+            limitVideoDuration=getInt(LIMIT_VIDEO_DURATION,12)
+        }
     }
 
     /**
-     * 申请定位权限
+     * 申请权限
      */
     fun checkPermission() {
         if (PermissionUtil.findNeedRequestPermissions(activity, arrayOf(
                     Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ,Manifest.permission.WRITE_SETTINGS) ).isNotEmpty()) {
+                    ,Manifest.permission.READ_EXTERNAL_STORAGE) ).isNotEmpty()) {
             PermissionUtil.requestPermission(this, arrayOf(
-                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.WRITE_SETTINGS), QUESTION_AUTH)
+                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE), QUESTION_AUTH)
         }else{
             getPhotoVideo()
         }
@@ -117,7 +122,7 @@ class PhotoSelectFragment:Fragment() {
      * 查询本地图片和视频
      */
     private fun getPhotoVideo(){
-        progressBar.show()
+        progressBar.visibility=View.VISIBLE
         queryThread.start()
         queryHandler=object :Handler(queryThread.looper){
             override fun handleMessage(msg: Message) {
@@ -129,7 +134,7 @@ class PhotoSelectFragment:Fragment() {
                     }
                     photoList.addAll(photoFolderList[0].photos)
                     photoRecyclerView.post { photoAdapter.notifyDataSetChanged() }
-                    progressBar.post { progressBar.hide() }
+                    progressBar.post { progressBar.visibility=View.GONE }
                 }
             }
         }

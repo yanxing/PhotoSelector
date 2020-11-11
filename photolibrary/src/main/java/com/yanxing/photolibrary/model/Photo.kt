@@ -15,7 +15,8 @@ data class Photo(
     /**
      * 修改时间,没有就用创建时间
      */
-    var time:Long=0):Comparable<Photo>{
+    var time:Long=0,
+    var select:Boolean=false):Comparable<Photo>{
 
     //按照时间排序
     override fun compareTo(other: Photo): Int {

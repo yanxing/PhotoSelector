@@ -4,4 +4,10 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.PERMISSION.READ_EXTERNAL_STORAGE"/>
+
+    <application>
+        <activity android:name=".PhotoSelectActivity"
+            android:theme="@style/PhotoSelectorTheme"
+            android:screenOrientation="portrait"/>
+    </application>
 </manifest>

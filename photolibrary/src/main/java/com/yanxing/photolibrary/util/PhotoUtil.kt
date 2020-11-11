@@ -90,6 +90,7 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                         && !imageName.endsWith("png", true)
                         && !imageName.endsWith("jpeg", true)
                     ) {
+                        Log.d("时间图片后缀名不匹配",imageName)
                         continue
                     }
                     imagePath =
@@ -126,7 +127,6 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 photoUri, arrayOf(
                     MediaStore.Video.Media._ID,
                     MediaStore.Video.Media.DATE_MODIFIED,
-                    MediaStore.Video.Media.DATE_ADDED,
                     MediaStore.Video.Media.RELATIVE_PATH,
                     MediaStore.Video.Media.DISPLAY_NAME
                 ), MediaStore.Video.Media.MIME_TYPE + "=?",
@@ -137,9 +137,6 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Video.Media._ID))
                 val updateTime =
                     cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED))
-                val addTime =
-                    cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DATE_ADDED))
-                Log.d("时间", "$updateTime  $addTime")
                 //视频路径
                 val videoUri =
                     Uri.parse(MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString() + File.separator + id)
@@ -169,14 +166,14 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val duration =mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
                 //这个文件夹下有视频了
                 if (photoFolderMap.containsKey(videoPath)) {
-                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(), if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(), updateTime)
                     photoFolderMap[videoPath]?.photos?.add(photo)
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
                     continue
                 } else {
                     //还没有这个文件夹
                     val photoFolder = PhotoFolder("", ArrayList(), false)
-                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(), if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(), updateTime)
                     photoFolder.photos.add(photo)
                     photoFolder.name = videoPath
                     photoFolderMap[videoPath] = photoFolder
@@ -188,9 +185,16 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
         }
     }
     val photoFolders=ArrayList<PhotoFolder>()
+    var allPhotoFolder:PhotoFolder?=null
     photoFolderMap.forEach { (_, u) ->
-        photoFolders.add(u)
+        if (u.isSelected){
+            allPhotoFolder=u
+        }else{
+            photoFolders.add(u)
+        }
     }
+    //把总的照片或者视频文件夹移到最前面
+    allPhotoFolder?.let { photoFolders.add(0,it) }
     return photoFolders
 }
 
@@ -223,7 +227,6 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 photoUri,
                 arrayOf(
                     MediaStore.Images.Media.DATE_MODIFIED,
-                    MediaStore.Images.Media.DATE_ADDED,
                     MediaStore.Images.Media.DATA,
                 ),
                 MediaStore.Images.Media.MIME_TYPE + "=? or " + MediaStore.Images.Media.MIME_TYPE + "=?",
@@ -234,9 +237,6 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
                 val updateTime =
                     cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED))
-                val addTime =
-                    cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED))
-                Log.d("时间", "$updateTime  $addTime")
 
                 if (!path.endsWith("jpg", true) && !path.endsWith("gif", true)
                     && !path.endsWith("png", true)
@@ -255,14 +255,14 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                     if (pathFile.parentFile == null) "" else pathFile.parentFile?.absolutePath
                 //这个文件夹下有图片了
                 if (photoFolderMap.containsKey(imagePath)) {
-                    val photo = Photo(imageUri, 1, 0, if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(imageUri, 1, 0,updateTime)
                     photoFolderMap[imagePath]?.photos?.add(photo)
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
                     continue
                 } else {
                     //还没有这个文件夹
                     val photoFolder = PhotoFolder("", ArrayList(), false)
-                    val photo = Photo(imageUri, 1, 0, if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(imageUri, 1, 0,updateTime)
                     photoFolder.photos.add(photo)
                     photoFolder.name = imagePath!!
                     photoFolderMap[imagePath] = photoFolder
@@ -281,7 +281,6 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
             val cursor = contentResolver.query(
                 photoUri, arrayOf(
                     MediaStore.Video.Media.DATE_MODIFIED,
-                    MediaStore.Video.Media.DATE_ADDED,
                     MediaStore.Video.Media.DISPLAY_NAME
                 ), MediaStore.Video.Media.MIME_TYPE + "=?",
                 arrayOf("video/*"), MediaStore.Video.Media.DATE_MODIFIED + " desc"
@@ -290,9 +289,6 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA))
                 val updateTime =
                     cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED))
-                val addTime =
-                    cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DATE_ADDED))
-                Log.d("时间", "$updateTime  $addTime")
 
                 val pathFile = File(path)
                 if (!pathFile.exists()) {
@@ -321,14 +317,14 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val duration =mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
                 //这个文件夹下有视频了
                 if (photoFolderMap.containsKey(videoPath)) {
-                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(), if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(),updateTime)
                     photoFolderMap[videoPath]?.photos?.add(photo)
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
                     continue
                 } else {
                     //还没有这个文件夹
                     val photoFolder = PhotoFolder("", ArrayList(), false)
-                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(), if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(videoUri, 1, (duration.toLong()/1000).toInt(),updateTime)
                     photoFolder.photos.add(photo)
                     photoFolder.name = videoPath!!
                     photoFolderMap[videoPath] = photoFolder
@@ -340,8 +336,15 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
         }
     }
     val photoFolders=ArrayList<PhotoFolder>()
+    var allPhotoFolder:PhotoFolder?=null
     photoFolderMap.forEach { (_, u) ->
-        photoFolders.add(u)
+        if (u.isSelected){
+            allPhotoFolder=u
+        }else{
+            photoFolders.add(u)
+        }
     }
+    //把总的照片或者视频文件夹移到最前面
+    allPhotoFolder?.let { photoFolders.add(0,it) }
     return photoFolders
 }
