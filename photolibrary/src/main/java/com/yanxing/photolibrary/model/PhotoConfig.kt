@@ -1,4 +1,7 @@
-package com.yanxing.photolibrary
+package com.yanxing.photolibrary.model
+
+import android.content.Context
+import android.widget.Toast
 
 /**
  * @author 李双祥 on 2020/11/9.
@@ -49,5 +52,9 @@ fun formatDuration(duration:Int):String{
         return h.toString()+":"+m+":"+m%60
     }
     return duration.toString()
+}
+
+fun showToast(context: Context,msg:String){
+    Toast.makeText(context,msg,Toast.LENGTH_LONG).show()
 }
 

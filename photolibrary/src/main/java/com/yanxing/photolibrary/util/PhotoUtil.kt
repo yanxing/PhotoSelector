@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary
+package com.yanxing.photolibrary.util
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
@@ -8,6 +8,8 @@ import android.provider.MediaStore
 import android.util.ArrayMap
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.yanxing.photolibrary.model.Photo
+import com.yanxing.photolibrary.model.PhotoFolder
 import java.io.File
 
 /**
@@ -20,7 +22,7 @@ import java.io.File
  * 兼容方式获取图片/视频
  * @type 加载媒体类型（只支持图片视频），0全部，1图片，2视频，默认1只加载图片
  */
-fun getPhotos(context: Context, type: Int = 1): ArrayMap<String, PhotoFolder> {
+fun getPhotos(context: Context, type: Int = 1): ArrayList<PhotoFolder> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         getNewPhotos(context, type)
     } else {
@@ -32,7 +34,7 @@ fun getPhotos(context: Context, type: Int = 1): ArrayMap<String, PhotoFolder> {
  * AndroidQ方式获取图片/视频
  */
 @RequiresApi(Build.VERSION_CODES.Q)
-private fun getNewPhotos(context: Context, type: Int): ArrayMap<String, PhotoFolder> {
+private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
     val allPhotoKey = when (type) {
         0 -> {
             "图片和视频"
@@ -185,13 +187,17 @@ private fun getNewPhotos(context: Context, type: Int): ArrayMap<String, PhotoFol
         } catch (e: Exception) {
         }
     }
-    return photoFolderMap
+    val photoFolders=ArrayList<PhotoFolder>()
+    photoFolderMap.forEach { (_, u) ->
+        photoFolders.add(u)
+    }
+    return photoFolders
 }
 
 /**
  * AndroidQ以前版本获取图片/视频
  */
-private fun getOldPhotos(context: Context, type: Int): ArrayMap<String, PhotoFolder> {
+private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
     val allPhotoKey = when (type) {
         0 -> {
             "图片和视频"
@@ -333,5 +339,9 @@ private fun getOldPhotos(context: Context, type: Int): ArrayMap<String, PhotoFol
         } catch (e: Exception) {
         }
     }
-    return photoFolderMap
+    val photoFolders=ArrayList<PhotoFolder>()
+    photoFolderMap.forEach { (_, u) ->
+        photoFolders.add(u)
+    }
+    return photoFolders
 }

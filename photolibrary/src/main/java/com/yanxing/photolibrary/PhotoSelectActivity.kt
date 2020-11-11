@@ -3,6 +3,9 @@ package com.yanxing.photolibrary
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.yanxing.photolibrary.model.MAX_NUM
+import com.yanxing.photolibrary.model.SELECT_MODE
+import com.yanxing.photolibrary.model.SHOW_CAMERA
 
 /**
  * 图片/视频选择，兼容Android10存储权限

@@ -1,6 +1,8 @@
 package com.yanxing.photolibrary
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
@@ -9,10 +11,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.util.ArrayMap
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.yanxing.photolibrary.model.Photo
+import com.yanxing.photolibrary.model.PhotoFolder
+import com.yanxing.photolibrary.model.formatDuration
+import com.yanxing.photolibrary.model.showToast
+import com.yanxing.photolibrary.util.PermissionUtil
+import com.yanxing.photolibrary.util.getPhotos
 import kotlinx.android.synthetic.main.fragment_photo_select.*
 
 /**
@@ -41,6 +48,7 @@ class PhotoSelectFragment:Fragment() {
      * 限制选择视频时长12秒
      */
     private var limitVideoDuration=12
+    private val QUESTION_AUTH=1
 
     /**
      * 当前展示的图片视频
@@ -49,9 +57,9 @@ class PhotoSelectFragment:Fragment() {
     private val queryThread = HandlerThread("query_thread")
     private lateinit var queryHandler:Handler
     /**
-     * 全部图片
+     * 全部图片/视频
      */
-    private var photoFolderMap=ArrayMap<String, PhotoFolder>()
+    private var photoFolderList=ArrayList<PhotoFolder>()
 
     private val photoAdapter by lazy {
         photoRecyclerView.layoutManager=GridLayoutManager(activity, 4)
@@ -75,53 +83,83 @@ class PhotoSelectFragment:Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.fragment_photo_select, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
+        initView()
+        checkPermission()
     }
 
     private fun initView(){
         cancel.setOnClickListener { activity?.finish() }
         photoRecyclerView.adapter=photoAdapter
-        progressBar.show()
+    }
+
+    /**
+     * 申请定位权限
+     */
+    fun checkPermission() {
+        if (PermissionUtil.findNeedRequestPermissions(activity, arrayOf(
+                    Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ,Manifest.permission.WRITE_SETTINGS) ).isNotEmpty()) {
+            PermissionUtil.requestPermission(this, arrayOf(
+                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.WRITE_SETTINGS), QUESTION_AUTH)
+        }else{
+            getPhotoVideo()
+        }
     }
 
     /**
      * 查询本地图片和视频
      */
     private fun getPhotoVideo(){
+        progressBar.show()
         queryThread.start()
         queryHandler=object :Handler(queryThread.looper){
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
                 activity?.let {
-                    photoFolderMap= getPhotos(it,loadMediaType)
-                    for (photoFolder in photoFolderMap){
-                        if (photoFolder.value.isSelected){
-
-                        }
+                    photoFolderList= getPhotos(it,loadMediaType)
+                    title.post {
+                        photoFolderList[0].name
                     }
+                    photoList.addAll(photoFolderList[0].photos)
+                    photoRecyclerView.post { photoAdapter.notifyDataSetChanged() }
+                    progressBar.post { progressBar.hide() }
                 }
-
             }
         }
+        queryHandler.sendEmptyMessage(0)
     }
 
-
-
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        queryThread.quit()
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == QUESTION_AUTH) {
+            var grant=true
+            for (i in grantResults.indices) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    showToast(activity!!,"未授权")
+                    grant=false
+                    break
+                }
+            }
+            if (grant){
+                getPhotoVideo()
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

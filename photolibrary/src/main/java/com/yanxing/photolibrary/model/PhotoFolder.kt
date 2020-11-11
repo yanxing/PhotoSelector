@@ -1,4 +1,6 @@
-package com.yanxing.photolibrary
+package com.yanxing.photolibrary.model
+
+import com.yanxing.photolibrary.model.Photo
 
 /**
  * @author 李双祥 on 2020/11/9.

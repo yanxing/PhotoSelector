@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary
+package com.yanxing.photolibrary.model
 
 import android.net.Uri
 
