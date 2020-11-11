@@ -28,21 +28,21 @@ class PhotoSelectFragment:Fragment() {
     /**
      * 是否显示相机，允许拍照
      */
-    private var showCamera=false
+    private var showCamera=true
     /**
      * true多选，false单选
      */
     private var selectMultiple=false
     /**
-     * 最大选择图片，默认9张，selectMultiple为true有效
+     * 最大选择图片，默认9张，selectMultiple为true有效，一次性最大只能为9张
      */
-    private var defaultNumber=9
+    private var maxNumber=9
     /**
      * 加载媒体类型（只支持图片视频），0全部，1图片，2视频，默认1只加载图片
      */
     private var loadMediaType=1
     /**
-     * 限制选择视频时长12秒
+     * 限制选择视频时长
      */
     private var limitVideoDuration=12
     private val QUESTION_AUTH=1
@@ -98,9 +98,21 @@ class PhotoSelectFragment:Fragment() {
         arguments?.apply {
             showCamera=getBoolean(SHOW_CAMERA,true)
             selectMultiple=getBoolean(SELECT_MODE,false)
-            defaultNumber=getInt(MAX_NUM,9)
+            maxNumber=getInt(MAX_NUM,9)
             loadMediaType=getInt(LOAD_MEDIA_TYPE,1)
             limitVideoDuration=getInt(LIMIT_VIDEO_DURATION,12)
+            //校验传入的参数
+            if (loadMediaType!=0&&loadMediaType!=1&&loadMediaType!=2){
+                loadMediaType=1
+            }
+            if (selectMultiple){
+                if (maxNumber>9||maxNumber<1){
+                    maxNumber=9
+                }
+            }
+            if (limitVideoDuration<1){
+                limitVideoDuration=12
+            }
         }
     }
 

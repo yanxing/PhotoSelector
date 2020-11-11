@@ -61,7 +61,6 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 arrayOf(
                     MediaStore.Images.Media._ID,
                     MediaStore.Images.Media.DATE_MODIFIED,
-                    MediaStore.Images.Media.DATE_ADDED,
                     MediaStore.Images.Media.RELATIVE_PATH,
                     MediaStore.Images.Media.DISPLAY_NAME
                 ),
@@ -74,9 +73,6 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val id = cursor.getInt(cursor.getColumnIndex(MediaStore.Images.Media._ID))
                 val updateTime =
                     cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED))
-                val addTime =
-                    cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.DATE_ADDED))
-                Log.d("时间", "$updateTime  $addTime")
                 //图片路径
                 val imageUri =
                     Uri.parse(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString() + File.separator + id)
@@ -86,13 +82,7 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                     context.contentResolver.openFileDescriptor(imageUri, "r")
                     val imageName =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
-                    if (!imageName.endsWith("jpg", true) && !imageName.endsWith("gif", true)
-                        && !imageName.endsWith("png", true)
-                        && !imageName.endsWith("jpeg", true)
-                    ) {
-                        Log.d("时间图片后缀名不匹配",imageName)
-                        continue
-                    }
+                    Log.d("时间视频名称", imageName)
                     imagePath =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.RELATIVE_PATH))
                 } catch (e: Exception) {
@@ -100,14 +90,14 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 }
                 //这个文件夹下有图片了
                 if (photoFolderMap.containsKey(imagePath)) {
-                    val photo = Photo(imageUri, 1, 0, if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(imageUri, 1, 0,updateTime)
                     photoFolderMap[imagePath]?.photos?.add(photo)
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
                     continue
                 } else {
                     //还没有这个文件夹
                     val photoFolder = PhotoFolder("", ArrayList(), false)
-                    val photo = Photo(imageUri, 1, 0, if (updateTime == 0L) addTime else updateTime)
+                    val photo = Photo(imageUri, 1, 0,updateTime)
                     photoFolder.photos.add(photo)
                     photoFolder.name = imagePath
                     photoFolderMap[imagePath] = photoFolder
@@ -146,21 +136,12 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                     context.contentResolver.openFileDescriptor(videoUri, "r")
                     val videoName =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME))
-//                    if (!videoName.endsWith("jpg",true)&&!videoName.endsWith("gif",true)
-//                        &&!videoName.endsWith("png",true)
-//                        &&!videoName.endsWith("jpeg",true)){
-//                        continue
-//                    }
                     Log.d("时间视频名称", videoName)
                     videoPath =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.RELATIVE_PATH))
                 } catch (e: Exception) {
                     continue
                 }
-                //                    if (!imageName.endsWith("jpg") && !imageName.endsWith("gif") && !imageName.endsWith("png") && !imageName.endsWith("jpge")) {
-//                        continue;
-//                    }
-                //long time=mCursor.getLong(mCursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION));
                 val mmr = MediaMetadataRetriever()
                 mmr.setDataSource(context, videoUri)
                 val duration =mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
@@ -237,13 +218,6 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
                 val updateTime =
                     cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED))
-
-                if (!path.endsWith("jpg", true) && !path.endsWith("gif", true)
-                    && !path.endsWith("png", true)
-                    && !path.endsWith("jpeg", true)
-                ) {
-                    continue
-                }
                 val pathFile = File(path)
                 if (!pathFile.exists()) {
                     //去掉冗余数据，用于校验这个路径下有没有图片
@@ -299,19 +273,6 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                 val videoUri = FileUriUtil.getFileUri(context, pathFile, 2)
                 val videoPath =
                     if (pathFile.parentFile == null) "" else pathFile.parentFile?.absolutePath
-//                var videoPath=""
-//                try {
-//                    //去掉冗余数据，用于校验这个路径下有没有真实的视频
-//                    context.contentResolver.openFileDescriptor(photoUri,"r")
-//                    val videoName=cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME))
-//                    if (!videoName.endsWith("jpg",true)&&!videoName.endsWith("gif",true)
-//                        &&!videoName.endsWith("png",true)
-//                        &&!videoName.endsWith("jpeg",true)){
-//                        continue
-//                    }
-//                    Log.d("时间视频名称",videoName)
-//                    videoPath=cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.RELATIVE_PATH))
-//                }catch (e:Exception){continue}
                 val mmr = MediaMetadataRetriever()
                 mmr.setDataSource(context, videoUri)
                 val duration =mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)

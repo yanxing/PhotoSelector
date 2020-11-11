@@ -8,6 +8,11 @@
     <application>
         <activity android:name=".PhotoSelectActivity"
             android:theme="@style/PhotoSelectorTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="com.yanxing.photolibrary.PhotoSelectActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
