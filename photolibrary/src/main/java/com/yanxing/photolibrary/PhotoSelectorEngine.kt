@@ -35,7 +35,7 @@ object PhotoSelectorEngine {
 
 
     /**
-     * 是否显示相机，允许拍照
+     * 是否显示相机拍照，多选情况下，理应不显示相机，如果此时显示相机拍照，将只返回拍照图片的路径
      */
     fun setShowCamera(showCamera: Boolean): PhotoSelectorEngine  {
         this.showCamera = showCamera

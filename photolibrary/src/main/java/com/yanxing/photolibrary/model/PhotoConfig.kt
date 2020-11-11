@@ -9,7 +9,7 @@ import android.widget.Toast
  */
 
 /**
- * 是否显示相机,默认显示true，这里暂只能拍照片
+ * 是否显示相机,默认不显示false，暂只能拍照片
  */
 const val SHOW_CAMERA="show_camera"
 /**

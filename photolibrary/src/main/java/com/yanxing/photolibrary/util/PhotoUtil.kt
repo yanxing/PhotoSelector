@@ -224,7 +224,7 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                     continue
                 }
                 //图片路径
-                val imageUri = FileUriUtil.getFileUri(context, pathFile, 1)
+                val imageUri = FileUriUtil.getFileToUri(context, pathFile, 1)
                 val imagePath =
                     if (pathFile.parentFile == null) "" else pathFile.parentFile?.absolutePath
                 //这个文件夹下有图片了
@@ -270,7 +270,7 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
                     continue
                 }
                 //视频路径
-                val videoUri = FileUriUtil.getFileUri(context, pathFile, 2)
+                val videoUri = FileUriUtil.getFileToUri(context, pathFile, 2)
                 val videoPath =
                     if (pathFile.parentFile == null) "" else pathFile.parentFile?.absolutePath
                 val mmr = MediaMetadataRetriever()

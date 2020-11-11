@@ -11,10 +11,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         text.setOnClickListener {
-            PhotoSelectorEngine
-                .setShowCamera(true)
-                .setSelectMultiple(true)
-                .start(this)
+            PhotoSelectorEngine.setShowCamera(true).setSelectMultiple(true).start(this)
         }
     }
 }
