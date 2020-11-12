@@ -114,6 +114,23 @@ class PhotoSelectActivity : AppCompatActivity() {
         if (!selectMultiple) {
             confirm.visibility = View.GONE
         }
+        val popWindowFolder = PopWindowFolder()
+        //点击标题，真是图片视频文件夹
+        titleTxt.setOnClickListener {
+            arrow.rotation=180f
+            popWindowFolder.showFolder(this, titleTxt, allPhotoFolderList) {
+                if (it < allPhotoFolderList.size) {
+                    titleTxt.text = formatString(allPhotoFolderList[it].name)
+                    currentPhotoList.clear()
+                    currentPhotoList.addAll(allPhotoFolderList[it].photos)
+                    photoAdapter.update(currentPhotoList)
+                }
+            }
+            popWindowFolder.popupWindow.setOnDismissListener {
+                arrow.rotation=0f
+            }
+        }
+        //点击确定
         confirm.setOnClickListener {
             if (photoSelectedList.size > 0) {
                 val intent = Intent()
@@ -241,7 +258,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                     allPhotoFolderList[0].photos.add(photo)
                 }
                 titleTxt.post {
-                    allPhotoFolderList[0].name
+                    titleTxt.text=allPhotoFolderList[0].name
                 }
                 currentPhotoList.addAll(allPhotoFolderList[0].photos)
                 photoRecyclerView.post { photoAdapter.notifyDataSetChanged() }

@@ -20,25 +20,27 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/cancel"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@+id/cancel">
 
         <TextView
             android:id="@+id/titleTxt"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:text="照片/视频"
+            android:textSize="18dp"
             android:textColor="@android:color/black" />
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:id="@+id/arrow"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_marginLeft="6dp"
             android:rotation="180"
             android:src="@mipmap/up_arrow" />

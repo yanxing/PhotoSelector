@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="check">#ff33b5e5</color>
+    <color name="check">#537cff</color>
+    <color name="grey">#888888</color>
+    <color name="line">#eeeeee</color>
 </resources>

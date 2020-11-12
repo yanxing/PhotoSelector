@@ -11,4 +11,4 @@ data class PhotoFolder(
     //该文件夹下图片/视频列表
     var photos:ArrayList<Photo>,
     //是否选中该文件夹
-    var isSelected:Boolean=false)
+    var selected:Boolean=false)

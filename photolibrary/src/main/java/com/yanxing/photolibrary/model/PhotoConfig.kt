@@ -77,3 +77,20 @@ fun dp2px(context: Context, dp: Int): Int {
     return (dp * scale + 0.5f).toInt()
 }
 
+fun formatString(str: String?): String {
+    if (str == null) {
+        return ""
+    }
+    return if (str.contains("/")) {
+        val temp = str.split("/")
+        if (str.endsWith("/")){
+            temp[temp.size - 2]
+        }else{
+            temp[temp.size - 1]
+        }
+    } else {
+        str
+    }
+}
+
+

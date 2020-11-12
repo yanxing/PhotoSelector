@@ -40,10 +40,10 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
             "图片和视频"
         }
         1 -> {
-            "图片"
+            "所有图片"
         }
         else -> {
-            "视频"
+            "所有视频"
         }
     }
     //总的图片和视频
@@ -168,7 +168,7 @@ private fun getNewPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
     val photoFolders=ArrayList<PhotoFolder>()
     var allPhotoFolder:PhotoFolder?=null
     photoFolderMap.forEach { (_, u) ->
-        if (u.isSelected){
+        if (u.selected){
             allPhotoFolder=u
         }else{
             photoFolders.add(u)
@@ -188,10 +188,10 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
             "图片和视频"
         }
         1 -> {
-            "图片"
+            "所有图片"
         }
         else -> {
-            "视频"
+            "所有视频"
         }
     }
     //总的图片和视频
@@ -299,7 +299,7 @@ private fun getOldPhotos(context: Context, type: Int): ArrayList<PhotoFolder> {
     val photoFolders=ArrayList<PhotoFolder>()
     var allPhotoFolder:PhotoFolder?=null
     photoFolderMap.forEach { (_, u) ->
-        if (u.isSelected){
+        if (u.selected){
             allPhotoFolder=u
         }else{
             photoFolders.add(u)

@@ -33,6 +33,7 @@
         app:backgroundTint="@android:color/transparent"
         app:strokeWidth="1dp"
         android:checkable="false"
+        android:clickable="false"
         app:strokeColor="@android:color/white"
         app:layout_constraintRight_toRightOf="@+id/image"
         app:layout_constraintTop_toTopOf="@+id/image" />
