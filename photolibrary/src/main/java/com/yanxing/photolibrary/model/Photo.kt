@@ -1,11 +1,13 @@
 package com.yanxing.photolibrary.model
 
 import android.net.Uri
+import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 /**
  * @author 李双祥 on 2020/11/9.
  */
+@Parcelize
 data class Photo(
     //为了兼容AndroidQ，路径为content形式
     var path:Uri?=null,
@@ -17,10 +19,25 @@ data class Photo(
      * 修改时间,没有就用创建时间
      */
     var time:Long=0,
-    var select:Boolean=false):Comparable<Photo>{
+    /**
+     * 记录选中
+     */
+    var select:Boolean=false):Comparable<Photo>, Parcelable {
 
     //按照时间排序
     override fun compareTo(other: Photo): Int {
         return (this.time-other.time).toInt()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Photo
+        //只要路径一样，就认为同一个
+        if (path != other.path) return false
+        return true
+    }
+
+
 }
