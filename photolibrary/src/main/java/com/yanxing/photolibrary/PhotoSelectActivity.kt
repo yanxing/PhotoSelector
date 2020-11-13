@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
@@ -148,29 +149,36 @@ class PhotoSelectActivity : AppCompatActivity() {
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
                 mDataList[position].apply {
-                    holder.itemView.image.apply {
+                    holder.itemView.apply {
                         //即使showCamera为true仅在全部图片里面显示相机
                         if (type == -1) {
-                            Glide.with(this@PhotoSelectActivity)
-                                .load(R.mipmap.photo_selector_camera).override(width, width)
-                                .into(this)
+                            val layoutParams =cameraLayout.layoutParams as ConstraintLayout.LayoutParams
+                            layoutParams.width = width
+                            layoutParams.height = width
+                            cameraLayout.apply {
+                                this.layoutParams = layoutParams
+                                visibility = View.VISIBLE
+                            }
+                            image.visibility = View.GONE
                         } else {
                             Glide.with(this@PhotoSelectActivity).load(path).override(width, width)
-                                .into(this)
+                                .into(image)
+                            cameraLayout.visibility=View.GONE
+                            image.visibility = View.VISIBLE
                         }
-                    }
-                    if (type == 2) {
-                        //视频，显示时长
-                        holder.itemView.videoDuration.apply {
-                            visibility = View.VISIBLE
-                            text = formatDuration(duration)
+                    }.apply {
+                        if (type == 2) {
+                            //视频，显示时长
+                            video.visibility = View.VISIBLE
+                            videoDuration.apply {
+                                visibility = View.VISIBLE
+                                text = formatDuration(duration)
+                            }
+                        } else {
+                            videoDuration.visibility = View.GONE
+                            video.visibility = View.GONE
                         }
-                        holder.itemView.video.visibility = View.VISIBLE
-                    } else {
-                        holder.itemView.videoDuration.visibility = View.GONE
-                        holder.itemView.video.visibility = View.GONE
-                    }
-                    holder.itemView.state.apply {
+                    }.state.apply {
                         //单选或者相机占位
                         if (type==-1||!selectMultiple){
                             visibility=View.GONE
@@ -208,7 +216,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                     if (type == -1) {
                         takePhotoImage = TakePhotoUtil.takePhoto(this@PhotoSelectActivity)
                     } else {
-                        viewHolder.findViewById<MaterialButton>(R.id.state).let {
+                        viewHolder.itemView.state.let {
                             if (select) {
                                 photoSelectedList.remove(this)
                                 confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"

@@ -5,28 +5,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <ImageView
         android:id="@+id/cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="14dp"
-        android:paddingTop="24dp"
-        android:paddingRight="14dp"
-        android:paddingBottom="24dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:text="@string/cancel"
+        android:src="@mipmap/photo_selector_cancel"
         android:textColor="@android:color/black"
+        android:layout_marginLeft="14dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/titleLayout"/>
 
     <LinearLayout
+        android:id="@+id/titleLayout"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/cancel"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cancel">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/titleTxt"
@@ -49,15 +48,15 @@
     <TextView
         android:id="@+id/confirm"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="14dp"
-        android:paddingTop="24dp"
-        android:paddingRight="14dp"
-        android:paddingBottom="24dp"
+        android:layout_height="0dp"
         android:text="确定"
+        android:gravity="center"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
         android:textColor="@android:color/black"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/titleLayout"
+        app:layout_constraintTop_toTopOf="@+id/titleLayout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/photoRecyclerView"
@@ -66,7 +65,7 @@
         android:layout_marginLeft="2dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cancel" />
+        app:layout_constraintTop_toBottomOf="@+id/titleLayout" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -75,7 +74,7 @@
         android:indeterminateTint="#cccccc"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cancel"
+        app:layout_constraintTop_toTopOf="@+id/titleLayout"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 

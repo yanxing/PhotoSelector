@@ -6,9 +6,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupWindow
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,6 +14,7 @@ import com.yanxing.photolibrary.model.PhotoFolder
 import com.yanxing.photolibrary.model.formatString
 import com.yanxing.photolibrary.model.getScreenMetrics
 
+import kotlinx.android.synthetic.main.item_popwindow_folder.view.*
 /**
  * 文件夹列表
  * @author 李双祥 on 2020/11/12.
@@ -40,24 +39,32 @@ class PopWindowFolder {
                 override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                     super.onBindViewHolder(holder, position)
                     mDataList[position].apply {
-                        holder.findViewById<ImageView>(R.id.state).apply {
+                        holder.itemView.apply {
+                            image.apply {
+                                visibility = if (photos.size > 0) {
+                                    //第一个可能是相机图标
+                                    if (photos[0].path==null){
+                                        if (photos.size>1){
+                                            Glide.with(context).load(photos[1].path).into(this)
+                                        }
+                                    }else{
+                                        Glide.with(context).load(photos[0].path).into(this)
+                                    }
+                                    View.VISIBLE
+                                } else {
+                                    View.GONE
+                                }
+                            }
+                        }.state.apply {
                             visibility = if (selected) {
-                                selectPosition=position
+                                selectPosition = position
                                 View.VISIBLE
                             } else {
                                 View.GONE
                             }
                         }
-                        holder.findViewById<TextView>(R.id.name).text = formatString(name)
-                        holder.findViewById<TextView>(R.id.number).text = "（" + photos.size + "）"
-                        holder.findViewById<ImageView>(R.id.image).apply {
-                            visibility = if (photos.size > 0) {
-                                Glide.with(context).load(photos[0].path).into(this)
-                                View.VISIBLE
-                            } else {
-                                View.GONE
-                            }
-                        }
+                        holder.setText(R.id.name, formatString(name))
+                        holder.setText(R.id.number, "（" + photos.size + "）")
                         holder.itemView.setOnClickListener {
                             if (!selected) {
                                 data[selectPosition].selected = false
