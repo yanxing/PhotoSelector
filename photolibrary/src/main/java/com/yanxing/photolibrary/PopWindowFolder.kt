@@ -1,11 +1,14 @@
 package com.yanxing.photolibrary
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,8 +16,8 @@ import com.bumptech.glide.Glide
 import com.yanxing.photolibrary.model.PhotoFolder
 import com.yanxing.photolibrary.model.formatString
 import com.yanxing.photolibrary.model.getScreenMetrics
-
 import kotlinx.android.synthetic.main.item_popwindow_folder.view.*
+
 /**
  * 文件夹列表
  * @author 李双祥 on 2020/11/12.
@@ -80,6 +83,16 @@ class PopWindowFolder {
         view.findViewById<View>(R.id.shape).setOnClickListener {
             popupWindow.dismiss()
         }
+        val inAnimatorSet = AnimatorSet()
+        val objectAnimator = ObjectAnimator.ofFloat(folderRecyclerView,
+            "translationY",
+            -getScreenMetrics(context).heightPixels.toFloat(),
+            0f)
+        val alphaInAnimator =ObjectAnimator.ofFloat(view.findViewById(R.id.shape), "alpha", 0f, 0.4f)
+        inAnimatorSet.interpolator = LinearInterpolator()
+        inAnimatorSet.duration = 200
+        inAnimatorSet.play(objectAnimator).with(alphaInAnimator)
+        inAnimatorSet.start()
     }
 
     private fun showAsDropDown(anchorView: View) {
@@ -89,9 +102,12 @@ class PopWindowFolder {
             // 7.1 版本处理
             if (Build.VERSION.SDK_INT >= 25) {
                 val screenHeight = getScreenMetrics(popupWindow.contentView.context).heightPixels
-                popupWindow.height = screenHeight - location[1] - anchorView.height+90
+                popupWindow.height = screenHeight - location[1] - anchorView.height
             }
-            popupWindow.showAtLocation(anchorView,Gravity.NO_GRAVITY,0,location[1] + anchorView.height)
+            popupWindow.showAtLocation(anchorView,
+                Gravity.NO_GRAVITY,
+                0,
+                location[1] + anchorView.height)
         } else {
             popupWindow.showAsDropDown(anchorView)
         }

@@ -1,6 +1,7 @@
 package com.yanxing.photolibrary
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,13 +12,10 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Message
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
-import com.google.android.material.button.MaterialButton
 import com.yanxing.photolibrary.model.*
 import com.yanxing.photolibrary.util.PermissionUtil
 import com.yanxing.photolibrary.util.TakePhotoUtil
@@ -89,7 +87,7 @@ class PhotoSelectActivity : AppCompatActivity() {
      */
     private fun setPhotoConfig() {
         intent?.apply {
-            showCamera = getBooleanExtra(SHOW_CAMERA, true)
+            showCamera = getBooleanExtra(SHOW_CAMERA, false)
             selectMultiple = getBooleanExtra(SELECT_MODE, false)
             maxNumber = getIntExtra(MAX_NUM, 9)
             loadMediaType = getIntExtra(LOAD_MEDIA_TYPE, 1)
@@ -120,7 +118,7 @@ class PhotoSelectActivity : AppCompatActivity() {
         val popWindowFolder = PopWindowFolder()
         //点击标题，真是图片视频文件夹
         titleTxt.setOnClickListener {
-            arrow.rotation = 180f
+            arrow.rotation = 0f
             popWindowFolder.showFolder(this, titleTxt, allPhotoFolderList) {
                 if (it < allPhotoFolderList.size) {
                     titleTxt.text = formatString(allPhotoFolderList[it].name)
@@ -130,7 +128,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                 }
             }
             popWindowFolder.popupWindow.setOnDismissListener {
-                arrow.rotation = 0f
+                arrow.rotation = 180f
             }
         }
         //点击确定
@@ -266,6 +264,7 @@ class PhotoSelectActivity : AppCompatActivity() {
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
                 allPhotoFolderList = getPhotos(this@PhotoSelectActivity, loadMediaType,limitVideoDuration)
+                //显示相机
                 if (showCamera) {
                     val photo = Photo(null, -1)
                     allPhotoFolderList[0].photos.add(0,photo)
