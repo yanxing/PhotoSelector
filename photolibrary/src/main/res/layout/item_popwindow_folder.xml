@@ -40,7 +40,7 @@
         android:layout_height="30dp"
         android:layout_marginRight="14dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/check"
+        android:src="@mipmap/photo_selector_check"
         app:layout_constraintBottom_toBottomOf="@+id/image"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/image" />

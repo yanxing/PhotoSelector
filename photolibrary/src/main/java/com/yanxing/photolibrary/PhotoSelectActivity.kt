@@ -22,6 +22,7 @@ import com.yanxing.photolibrary.util.PermissionUtil
 import com.yanxing.photolibrary.util.TakePhotoUtil
 import com.yanxing.photolibrary.util.getPhotos
 import kotlinx.android.synthetic.main.activity_photo_select.*
+import kotlinx.android.synthetic.main.item_photo.view.*
 
 /**
  * 图片/视频选择，兼容Android10存储权限
@@ -111,13 +112,14 @@ class PhotoSelectActivity : AppCompatActivity() {
         cancel.setOnClickListener {
             finish()
         }
+        //单选
         if (!selectMultiple) {
             confirm.visibility = View.GONE
         }
         val popWindowFolder = PopWindowFolder()
         //点击标题，真是图片视频文件夹
         titleTxt.setOnClickListener {
-            arrow.rotation=180f
+            arrow.rotation = 180f
             popWindowFolder.showFolder(this, titleTxt, allPhotoFolderList) {
                 if (it < allPhotoFolderList.size) {
                     titleTxt.text = formatString(allPhotoFolderList[it].name)
@@ -127,7 +129,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                 }
             }
             popWindowFolder.popupWindow.setOnDismissListener {
-                arrow.rotation=0f
+                arrow.rotation = 0f
             }
         }
         //点击确定
@@ -139,36 +141,44 @@ class PhotoSelectActivity : AppCompatActivity() {
                 finish()
             }
         }
+        //图片/视频适配器
         val width = (getScreenMetrics(this).widthPixels - dp2px(this, 2) * 5) / 4
         photoRecyclerView.layoutManager = GridLayoutManager(this, 4)
         photoAdapter = object : RecyclerViewAdapter<Photo>(currentPhotoList, R.layout.item_photo) {
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
                 mDataList[position].apply {
-                    holder.findViewById<ImageView>(R.id.image).apply {
+                    holder.itemView.image.apply {
                         //即使showCamera为true仅在全部图片里面显示相机
                         if (type == -1) {
-                            Glide.with(this@PhotoSelectActivity).load(R.mipmap.camera_icon)
-                                .override(width, width).into(this)
+                            Glide.with(this@PhotoSelectActivity)
+                                .load(R.mipmap.photo_selector_camera).override(width, width)
+                                .into(this)
                         } else {
-                            Glide.with(this@PhotoSelectActivity).load(path).override(width!!, width)
+                            Glide.with(this@PhotoSelectActivity).load(path).override(width, width)
                                 .into(this)
                         }
                     }
                     if (type == 2) {
                         //视频，显示时长
-                        holder.findViewById<TextView>(R.id.duration).apply {
+                        holder.itemView.videoDuration.apply {
                             visibility = View.VISIBLE
                             text = formatDuration(duration)
                         }
+                        holder.itemView.video.visibility = View.VISIBLE
                     } else {
-                        holder.findViewById<TextView>(R.id.duration).visibility = View.GONE
+                        holder.itemView.videoDuration.visibility = View.GONE
+                        holder.itemView.video.visibility = View.GONE
                     }
-                    holder.findViewById<MaterialButton>(R.id.state).apply {
+                    holder.itemView.state.apply {
+                        //单选或者相机占位
+                        if (type==-1||!selectMultiple){
+                            visibility=View.GONE
+                            return
+                        }
                         //已选择的
                         if (select) {
-                            backgroundTintList =
-                                ColorStateList.valueOf(resources.getColor(R.color.check))
+                            backgroundTintList =ColorStateList.valueOf(resources.getColor(R.color.check))
                             strokeColor = ColorStateList.valueOf(resources.getColor(R.color.check))
                             setTextColor(resources.getColor(android.R.color.white))
                             if (photoSelectedList.size > 0) {
@@ -180,10 +190,8 @@ class PhotoSelectActivity : AppCompatActivity() {
                                 }
                             }
                         } else {
-                            backgroundTintList =
-                                ColorStateList.valueOf(resources.getColor(android.R.color.transparent))
-                            strokeColor =
-                                ColorStateList.valueOf(resources.getColor(android.R.color.white))
+                            backgroundTintList =ColorStateList.valueOf(resources.getColor(android.R.color.transparent))
+                            strokeColor =ColorStateList.valueOf(resources.getColor(android.R.color.white))
                             text = ""
                             setTextColor(resources.getColor(android.R.color.white))
                         }
@@ -203,16 +211,13 @@ class PhotoSelectActivity : AppCompatActivity() {
                         viewHolder.findViewById<MaterialButton>(R.id.state).let {
                             if (select) {
                                 photoSelectedList.remove(this)
-                                confirm.text =
-                                    "确定(" + photoSelectedList.size + "/" + maxNumber + ")"
+                                confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
                             } else {
                                 if (photoSelectedList.size < maxNumber) {
                                     photoSelectedList.add(this)
-                                    confirm.text =
-                                        "确定(" + photoSelectedList.size + "/" + maxNumber + ")"
+                                    confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
                                 } else {
-                                    showToast(applicationContext,
-                                        "最多只能选择" + maxNumber.toString() + "个")
+                                    showToast(applicationContext,"最多只能选择" + maxNumber.toString() + "个")
                                 }
                             }
                             select = !select
@@ -252,13 +257,13 @@ class PhotoSelectActivity : AppCompatActivity() {
         queryHandler = object : Handler(queryThread.looper) {
             override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
-                allPhotoFolderList = getPhotos(this@PhotoSelectActivity, loadMediaType)
+                allPhotoFolderList = getPhotos(this@PhotoSelectActivity, loadMediaType,limitVideoDuration)
                 if (showCamera) {
                     val photo = Photo(null, -1)
-                    allPhotoFolderList[0].photos.add(photo)
+                    allPhotoFolderList[0].photos.add(0,photo)
                 }
                 titleTxt.post {
-                    titleTxt.text=allPhotoFolderList[0].name
+                    titleTxt.text = allPhotoFolderList[0].name
                 }
                 currentPhotoList.addAll(allPhotoFolderList[0].photos)
                 photoRecyclerView.post { photoAdapter.notifyDataSetChanged() }

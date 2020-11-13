@@ -2,8 +2,10 @@ package com.yanxing.photolibrary
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.fragment.app.Fragment
 import com.yanxing.photolibrary.model.*
+import com.yanxing.photolibrary.util.TakePhotoUtil
 
 /**
  * 启动图片/视频选择器工具
@@ -14,6 +16,7 @@ object PhotoSelectorEngine {
     private lateinit var intent: Intent
     private var activity: Activity? = null
     private var fragment: Fragment? = null
+    private var uri: Uri? = null
 
     fun create(activity: Activity): PhotoSelectorEngine {
         intent = Intent(activity, PhotoSelectActivity::class.java)
@@ -76,7 +79,7 @@ object PhotoSelectorEngine {
     }
 
     /**
-     * 在onActivityResult中接收数据，返回选择的图片/视频
+     * 启动选择器后，在onActivityResult中接收选择的图片/视频
      * @param requestCode onActivityResult方法中的requestCode
      */
     fun getResult(requestCode: Int, data: Intent?): ArrayList<Photo>? {
@@ -84,6 +87,23 @@ object PhotoSelectorEngine {
             return null
         }
         return data?.getParcelableArrayListExtra(PHOTO_KEY)
+    }
+
+    /**
+     * 相机拍照
+     */
+    fun takePhoto(activity: Activity) {
+        uri = TakePhotoUtil.takePhoto(activity)
+    }
+
+    /**
+     * 启动相机拍照后，在onActivityResult中接收拍的照片
+     */
+    fun getResult(requestCode: Int): Photo? {
+        if (requestCode == TakePhotoUtil.TAKE_PHOTO) {
+            return Photo(uri)
+        }
+        return null
     }
 
 }

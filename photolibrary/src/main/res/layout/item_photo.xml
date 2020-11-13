@@ -39,12 +39,25 @@
         app:layout_constraintTop_toTopOf="@+id/image" />
 
     <TextView
-        android:id="@+id/duration"
+        android:id="@+id/videoDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
         android:layout_marginBottom="6dp"
+        android:textSize="12dp"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/image"
-        app:layout_constraintLeft_toLeftOf="@+id/image" />
+        app:layout_constraintLeft_toRightOf="@+id/video" />
+
+    <ImageView
+        android:id="@+id/video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="6dp"
+        android:src="@mipmap/photo_selector_video"
+        app:layout_constraintLeft_toLeftOf="@+id/image"
+        app:layout_constraintBottom_toBottomOf="@+id/image"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

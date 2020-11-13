@@ -43,7 +43,7 @@
             android:layout_height="18dp"
             android:layout_marginLeft="6dp"
             android:rotation="180"
-            android:src="@mipmap/up_arrow" />
+            android:src="@mipmap/photo_selector_up_arrow" />
     </LinearLayout>
 
     <TextView
