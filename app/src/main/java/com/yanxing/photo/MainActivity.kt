@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
                 .create(this)
                 .setShowCamera(true)
                 .setSelectMultiple(true)
-                .setLoadMediaType(1)
+                .setLoadMediaType(0)
                 .setLimitVideoDuration(30)
                 .start()
         }
