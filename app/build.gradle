@@ -5,13 +5,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion COMPILE_SDK_VERSION as int
 
     defaultConfig {
         applicationId "com.yanxing.photo"
-        minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion TARGET_SDK_VERSION
+        minSdkVersion COMMON_MIN_SDK_VERSION as int
         versionCode 1
         versionName "1.0"
 
