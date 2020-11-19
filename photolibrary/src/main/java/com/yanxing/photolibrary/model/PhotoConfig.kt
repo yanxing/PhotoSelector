@@ -30,8 +30,6 @@ const val LOAD_MEDIA_TYPE="media_type"
 const val LIMIT_VIDEO_DURATION="video_duration"
 
 const val PHOTO_KEY="photo_data"
-const val REQUEST_PHOTO_CODE=1000
-
 
 /**
  * 格式化时间，单位为秒

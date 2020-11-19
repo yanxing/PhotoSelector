@@ -100,6 +100,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                 if (maxNumber > 9 || maxNumber < 1) {
                     maxNumber = 9
                 }
+                confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
             }
             if (limitVideoDuration < 1) {
                 limitVideoDuration = 12
@@ -212,7 +213,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                 if (selectMultiple) {
                     //点击是相机
                     if (type == -1) {
-                        takePhotoImage = TakePhotoUtil.takePhoto(this@PhotoSelectActivity)
+                        takePhotoImage = TakePhotoUtil.takePhoto(this@PhotoSelectActivity,TakePhotoUtil.TAKE_PHOTO)
                     } else {
                         viewHolder.itemView.state.let {
                             if (select) {
@@ -230,6 +231,13 @@ class PhotoSelectActivity : AppCompatActivity() {
                             photoAdapter.notifyDataSetChanged()
                         }
                     }
+                }else{
+                    //单选
+                    photoSelectedList.add(this)
+                    val intent = Intent()
+                    intent.putParcelableArrayListExtra(PHOTO_KEY, photoSelectedList)
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
                 }
             }
         }
@@ -268,6 +276,17 @@ class PhotoSelectActivity : AppCompatActivity() {
                 if (showCamera) {
                     val photo = Photo(null, -1)
                     allPhotoFolderList[0].photos.add(0,photo)
+                    if (allPhotoFolderList[0].photos.size<=1){
+                        tip.post {
+                            tip.visibility=View.VISIBLE
+                        }
+                    }
+                }else{
+                    if (allPhotoFolderList[0].photos.size<1){
+                        tip.post {
+                            tip.visibility=View.VISIBLE
+                        }
+                    }
                 }
                 titleTxt.post {
                     titleTxt.text = allPhotoFolderList[0].name

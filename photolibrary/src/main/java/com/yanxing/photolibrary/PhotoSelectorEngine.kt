@@ -17,6 +17,14 @@ object PhotoSelectorEngine {
     private var activity: Activity? = null
     private var fragment: Fragment? = null
     private var uri: Uri? = null
+    /**
+     * 请求启动图片/视频选择器
+     */
+    const val REQUEST_PHOTO_CODE=1000
+    /**
+     * 拍照请求码
+     */
+    const val TAKE_PHOTO = 1001
 
     fun create(activity: Activity): PhotoSelectorEngine {
         intent = Intent(activity, PhotoSelectActivity::class.java)
@@ -73,37 +81,35 @@ object PhotoSelectorEngine {
     /**
      * 启动图片/视频选择器
      */
-    fun start() {
-        activity?.startActivityForResult(intent, REQUEST_PHOTO_CODE)
-        fragment?.startActivityForResult(intent, REQUEST_PHOTO_CODE)
+    fun start(requestCode: Int) {
+        activity?.startActivityForResult(intent, requestCode)
+        fragment?.startActivityForResult(intent, requestCode)
     }
 
     /**
      * 启动选择器后，在onActivityResult中接收选择的图片/视频
-     * @param requestCode onActivityResult方法中的requestCode
      */
-    fun getResult(requestCode: Int, data: Intent?): ArrayList<Photo>? {
-        if (requestCode != REQUEST_PHOTO_CODE) {
-            return null
-        }
+    fun getResult(data: Intent?): ArrayList<Photo>? {
         return data?.getParcelableArrayListExtra(PHOTO_KEY)
     }
 
     /**
      * 相机拍照
      */
-    fun takePhoto(activity: Activity) {
-        uri = TakePhotoUtil.takePhoto(activity)
+    fun takePhoto(requestCode: Int) {
+        //必须有一个不为空
+        if (activity==null) {
+            uri = TakePhotoUtil.takePhoto(fragment?.activity,requestCode)
+        }else{
+            uri = TakePhotoUtil.takePhoto(activity,requestCode)
+        }
     }
 
     /**
      * 启动相机拍照后，在onActivityResult中接收拍的照片
      */
-    fun getResult(requestCode: Int): Photo? {
-        if (requestCode == TakePhotoUtil.TAKE_PHOTO) {
-            return Photo(uri)
-        }
-        return null
+    fun getResult(): Photo? {
+        return Photo(uri)
     }
 
 }

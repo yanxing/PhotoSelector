@@ -24,7 +24,7 @@ public class TakePhotoUtil {
     /**
      * 拍照
      */
-    public static Uri takePhoto(Activity context) {
+    public static Uri takePhoto(Activity context,int requestCode) {
         AUTHORITY = context.getPackageName() + ".provider";
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //这里使用AndroidQ沙盒
@@ -42,7 +42,7 @@ public class TakePhotoUtil {
         } else {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
         }
-        context.startActivityForResult(intent, TAKE_PHOTO);
+        context.startActivityForResult(intent, requestCode);
         return FileUriUtil.getFileToUri(context,file,1);
     }
 }

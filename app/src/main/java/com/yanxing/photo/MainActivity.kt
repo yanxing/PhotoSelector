@@ -20,14 +20,14 @@ class MainActivity : AppCompatActivity() {
                 .setSelectMultiple(true)
                 .setLoadMediaType(0)
                 .setLimitVideoDuration(30)
-                .start()
+                .start(PhotoSelectorEngine.REQUEST_PHOTO_CODE)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            val photos=PhotoSelectorEngine.getResult(requestCode,data)
+        if (resultCode == Activity.RESULT_OK&&requestCode==PhotoSelectorEngine.REQUEST_PHOTO_CODE) {
+            val photos=PhotoSelectorEngine.getResult(data)
             photos?.forEach {
                 showToast(applicationContext,it.path.toString())
             }
