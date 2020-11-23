@@ -120,6 +120,7 @@ class PhotoSelectActivity : AppCompatActivity() {
         //点击标题，真是图片视频文件夹
         titleTxt.setOnClickListener {
             arrow.rotation = 0f
+            shape.visibility=View.VISIBLE
             popWindowFolder.showFolder(this, titleTxt, allPhotoFolderList) {
                 if (it < allPhotoFolderList.size) {
                     titleTxt.text = formatString(allPhotoFolderList[it].name)
@@ -130,6 +131,7 @@ class PhotoSelectActivity : AppCompatActivity() {
             }
             popWindowFolder.popupWindow.setOnDismissListener {
                 arrow.rotation = 180f
+                shape.visibility=View.GONE
             }
         }
         //点击确定

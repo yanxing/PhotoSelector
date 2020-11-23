@@ -1,92 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/cancel"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:text="@string/cancel"
-        android:src="@mipmap/photo_selector_cancel"
-        android:textColor="@android:color/black"
-        android:layout_marginLeft="14dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/titleLayout"/>
+            android:id="@+id/cancel"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="14dp"
+            android:src="@mipmap/photo_selector_cancel"
+            android:text="@string/cancel"
+            android:textColor="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/titleLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/titleLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+            android:id="@+id/titleLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/titleTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="照片/视频"
-            android:textSize="18dp"
-            android:textColor="@android:color/black" />
+                android:id="@+id/titleTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="照片/视频"
+                android:textColor="@android:color/black"
+                android:textSize="18dp" />
 
         <ImageView
-            android:id="@+id/arrow"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginLeft="6dp"
-            android:rotation="180"
-            android:src="@mipmap/photo_selector_up_arrow" />
+                android:id="@+id/arrow"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="6dp"
+                android:rotation="180"
+                android:src="@mipmap/photo_selector_up_arrow" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/confirm"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="确定"
-        android:gravity="center"
-        android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:textColor="@android:color/black"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/titleLayout"
-        app:layout_constraintTop_toTopOf="@+id/titleLayout" />
+            android:id="@+id/confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:text="确定"
+            android:textColor="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/titleLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleLayout" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/photoRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleLayout" />
+            android:id="@+id/photoRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleLayout" />
 
     <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:indeterminateTint="#cccccc"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/titleLayout"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+            android:id="@+id/progressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:indeterminateTint="#cccccc"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleLayout" />
 
     <TextView
             android:id="@+id/tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="没有图片/视频"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/titleLayout"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleLayout" />
+
+
+    <View
+            android:id="@+id/shape"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.4"
             android:visibility="gone"
-            android:text="没有图片/视频"/>
+            android:background="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleLayout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -80,7 +80,7 @@ class PopWindowFolder {
                     }
                 }
             }
-        view.findViewById<View>(R.id.shape).setOnClickListener {
+        view.findViewById<View>(R.id.out).setOnClickListener {
             popupWindow.dismiss()
         }
         val inAnimatorSet = AnimatorSet()
