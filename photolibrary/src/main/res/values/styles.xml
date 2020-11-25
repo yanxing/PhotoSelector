@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="PhotoSelectorTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
-        <item name="colorPrimaryDark">@android:color/black</item>
+        <item name="colorPrimaryDark">@color/bg</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 

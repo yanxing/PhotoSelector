@@ -10,9 +10,12 @@ import android.provider.MediaStore;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -258,6 +261,63 @@ public class FileUriUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * 通过Uri copy 文件到path，androidQ中应用外文件复制到本App沙盒中
+     * @param uri Uri string
+     * @param filePath path
+     * @return boolean true or false
+     */
+    public static boolean copyFileToDir(Context context, String uri, String filePath) {
+
+        File file = null;
+        ParcelFileDescriptor parcelFd = null;
+        BufferedInputStream bin = null;
+        BufferedOutputStream bot = null;
+        try {
+            parcelFd = context.getContentResolver().openFileDescriptor(Uri.parse(uri),
+                    "r");
+            ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(parcelFd);
+            bin = new BufferedInputStream(inputStream);
+            file = new File(filePath);
+            bot = new BufferedOutputStream(new FileOutputStream(file));
+            byte[] bt = new byte[2048];
+            int len;
+            while ((len = bin.read(bt)) >= 0) {
+                bot.write(bt, 0, len);
+                bot.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (file != null && file.exists()) {
+                file.delete();
+            }
+            return false;
+        } finally {
+            if (bin != null) {
+                try {
+                    bin.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (bot != null) {
+                try {
+                    bot.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (parcelFd != null) {
+                try {
+                    parcelFd.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
     }
 
 }
