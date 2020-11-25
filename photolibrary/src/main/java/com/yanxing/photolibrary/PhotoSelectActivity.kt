@@ -187,8 +187,8 @@ class PhotoSelectActivity : AppCompatActivity() {
                         }
                         //已选择的
                         if (select) {
-                            backgroundTintList =ColorStateList.valueOf(resources.getColor(R.color.check))
-                            strokeColor = ColorStateList.valueOf(resources.getColor(R.color.check))
+                            backgroundTintList =ColorStateList.valueOf(resources.getColor(R.color.photo_selector_check))
+                            strokeColor = ColorStateList.valueOf(resources.getColor(R.color.photo_selector_check))
                             setTextColor(resources.getColor(android.R.color.white))
                             if (photoSelectedList.size > 0) {
                                 for (i in 0 until photoSelectedList.size) {

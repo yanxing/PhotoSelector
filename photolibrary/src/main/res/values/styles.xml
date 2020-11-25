@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="PhotoSelectorTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
-        <item name="colorPrimaryDark">@color/bg</item>
+        <item name="colorPrimaryDark">@color/photo_selector_bg</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="lineHorizontalStyle">
-        <item name="android:background">@color/line</item>
+    <style name="PhotoSelectorLineHorizontalStyle">
+        <item name="android:background">@color/photo_selector_line</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1.5px</item>
     </style>

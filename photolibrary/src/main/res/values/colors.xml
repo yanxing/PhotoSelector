@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="check">#537cff</color>
-    <color name="bg">#333333</color>
-    <color name="grey">#888888</color>
-    <color name="line">#484848</color>
+    <color name="photo_selector_check">#537cff</color>
+    <color name="photo_selector_bg">#333333</color>
+    <color name="photo_selector_grey">#888888</color>
+    <color name="photo_selector_line">#484848</color>
 </resources>
