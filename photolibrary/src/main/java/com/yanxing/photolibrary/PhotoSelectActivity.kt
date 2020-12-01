@@ -227,6 +227,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                                     confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
                                 } else {
                                     showToast(applicationContext,"最多只能选择" + maxNumber.toString() + "个")
+                                    return@apply
                                 }
                             }
                             select = !select
