@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.ArrayMap
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.yanxing.photolibrary.model.Photo
 import com.yanxing.photolibrary.model.PhotoFolder
@@ -87,14 +86,7 @@ private fun getNewPhotos(context: Context, type: Int,videoDuration:Int?): ArrayL
                 val updateTime =cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED))
                 //图片路径
                 val imageUri =Uri.parse(MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString() + File.separator + id)
-                var imagePath = ""
-                try {
-                    //去掉冗余数据，用于校验这个路径下有没有图片
-                    context.contentResolver.openFileDescriptor(imageUri, "r")
-                    imagePath =cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.RELATIVE_PATH))
-                } catch (e: Exception) {
-                    continue
-                }
+                val imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.RELATIVE_PATH))
                 //这个文件夹下有图片了
                 if (photoFolderMap.containsKey(imagePath)) {
                     val photo = Photo(imageUri, 1, 0,updateTime)
@@ -136,18 +128,10 @@ private fun getNewPhotos(context: Context, type: Int,videoDuration:Int?): ArrayL
                 val updateTime =cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DATE_MODIFIED))
                 //视频路径
                 val videoUri =Uri.parse(MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString() + File.separator + id)
-                var videoPath = ""
-                try {
-                    //去掉冗余数据，用于校验这个路径下有没有视频
-                    context.contentResolver.openFileDescriptor(videoUri, "r")
-                    videoPath =cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.RELATIVE_PATH))
-                } catch (e: Exception) {
-                    continue
-                }
+                val videoPath =cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.RELATIVE_PATH))
                 val mmr = MediaMetadataRetriever()
                 mmr.setDataSource(context, videoUri)
                 val duration =mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
-                Log.d("时间视频名称", duration)
                 val durationInt=(duration.toLong()/1000).toInt()
                 //时长大于限制
                 if (videoDuration!=null&&durationInt>videoDuration){

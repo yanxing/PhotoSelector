@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize//需要kotlin1.1.4+
 data class Photo(
-    //为了兼容AndroidQ，路径为content形式
+    //路径为content形式
     var path:Uri?=null,
     //1图片，2视频，-1相机（用于点击拍照的）
     var type:Int=1,
