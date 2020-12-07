@@ -105,6 +105,17 @@ class PhotoSelectActivity : AppCompatActivity() {
             if (limitVideoDuration < 1) {
                 limitVideoDuration = 12
             }
+            when (loadMediaType) {
+                0 -> {
+                    tip.text="没有可用图片和视频"
+                }
+                1 -> {
+                    tip.text="没有可用图片"
+                }
+                else -> {
+                    tip.text="没有可用视频"
+                }
+            }
         }
     }
 
