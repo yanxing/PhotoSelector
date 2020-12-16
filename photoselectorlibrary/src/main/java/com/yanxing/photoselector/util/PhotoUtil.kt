@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary.util
+package com.yanxing.photoselector.util
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
@@ -7,8 +7,8 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.ArrayMap
 import androidx.annotation.RequiresApi
-import com.yanxing.photolibrary.model.Photo
-import com.yanxing.photolibrary.model.PhotoFolder
+import com.yanxing.photoselector.model.Photo
+import com.yanxing.photoselector.model.PhotoFolder
 import java.io.File
 
 /**

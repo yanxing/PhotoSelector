@@ -1,11 +1,11 @@
-package com.yanxing.photolibrary
+package com.yanxing.photoselector
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.Fragment
-import com.yanxing.photolibrary.model.*
-import com.yanxing.photolibrary.util.TakePhotoUtil
+import com.yanxing.photoselector.model.*
+import com.yanxing.photoselector.util.TakePhotoUtil
 
 /**
  * 启动图片/视频选择器工具

@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary;
+package com.yanxing.photoselector;
 
 import android.view.LayoutInflater;
 import android.view.View;

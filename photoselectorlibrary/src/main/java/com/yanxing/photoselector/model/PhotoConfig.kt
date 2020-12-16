@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary.model
+package com.yanxing.photoselector.model
 
 import android.content.Context
 import android.util.DisplayMetrics

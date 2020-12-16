@@ -1,7 +1,6 @@
-package com.yanxing.photolibrary
+package com.yanxing.photoselector
 
 import android.Manifest
-import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,11 +14,12 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
-import com.yanxing.photolibrary.model.*
-import com.yanxing.photolibrary.util.PermissionUtil
-import com.yanxing.photolibrary.util.TakePhotoUtil
-import com.yanxing.photolibrary.util.getPhotos
+import com.yanxing.photoselector.model.*
+import com.yanxing.photoselector.util.PermissionUtil
+import com.yanxing.photoselector.util.TakePhotoUtil
+import com.yanxing.photoselector.util.getPhotos
 import kotlinx.android.synthetic.main.activity_photo_select.*
 import kotlinx.android.synthetic.main.item_photo.view.*
 
@@ -157,6 +157,7 @@ class PhotoSelectActivity : AppCompatActivity() {
         //图片/视频适配器
         val width = (getScreenMetrics(this).widthPixels - dp2px(this, 2) * 5) / 4
         photoRecyclerView.layoutManager = GridLayoutManager(this, 4)
+        (photoRecyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         photoAdapter = object : RecyclerViewAdapter<Photo>(currentPhotoList, R.layout.item_photo) {
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)

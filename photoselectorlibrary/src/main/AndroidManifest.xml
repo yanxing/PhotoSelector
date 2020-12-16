@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yanxing.photolibrary">
+    package="com.yanxing.photoselector">
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.PERMISSION.READ_EXTERNAL_STORAGE"/>
 
     <application>
-        <activity android:name=".PhotoSelectActivity"
+        <activity android:name="com.yanxing.photoselector.PhotoSelectActivity"
             android:theme="@style/PhotoSelectorTheme"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -16,7 +16,7 @@
         </activity>
 
         <provider
-            android:name=".MyFileProvider"
+            android:name="com.yanxing.photoselector.MyFileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">

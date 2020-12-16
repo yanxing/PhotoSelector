@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary
+package com.yanxing.photoselector
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -13,9 +13,9 @@ import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.yanxing.photolibrary.model.PhotoFolder
-import com.yanxing.photolibrary.model.formatString
-import com.yanxing.photolibrary.model.getScreenMetrics
+import com.yanxing.photoselector.model.PhotoFolder
+import com.yanxing.photoselector.model.formatString
+import com.yanxing.photoselector.model.getScreenMetrics
 import kotlinx.android.synthetic.main.item_popwindow_folder.view.*
 
 /**

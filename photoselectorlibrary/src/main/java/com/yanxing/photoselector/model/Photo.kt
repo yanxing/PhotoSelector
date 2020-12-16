@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary.model
+package com.yanxing.photoselector.model
 
 import android.net.Uri
 import android.os.Parcelable

@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary
+package com.yanxing.photoselector
 
 import androidx.core.content.FileProvider
 

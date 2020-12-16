@@ -1,4 +1,4 @@
-package com.yanxing.photolibrary.util;
+package com.yanxing.photoselector.util;
 
 import android.content.ContentResolver;
 import android.content.Context;

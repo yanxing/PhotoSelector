@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.yanxing.photolibrary.PhotoSelectorEngine
-import com.yanxing.photolibrary.model.showToast
+import com.yanxing.photoselector.PhotoSelectorEngine
+import com.yanxing.photoselector.model.showToast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
