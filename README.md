@@ -5,10 +5,10 @@
 ```kotlin
   PhotoSelectorEngine
       .create(this)
-      .setShowCamera(true)
-      .setSelectMultiple(true)
-      .setLoadMediaType(0)
-      .setLimitVideoDuration(30)
+      .setShowCamera(true)//第一个位置显示相机，用于拍照
+      .setSelectMultiple(true)//多选模式
+      .setLoadMediaType(0)//加载图片和视频
+      .setLimitVideoDuration(30)//只显示30秒内的视频
       .start(PhotoSelectorEngine.REQUEST_PHOTO_CODE)
 ```
 
