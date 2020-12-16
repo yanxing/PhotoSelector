@@ -34,7 +34,10 @@ const val PHOTO_KEY="photo_data"
 /**
  * 格式化时间，单位为秒
  */
-fun formatDuration(duration: Int):String{
+fun formatDuration(duration: Int?):String{
+    if (duration==null){
+        return "0:00"
+    }
     if (duration<10){
         return "0:0$duration"
     }
