@@ -29,12 +29,14 @@ object PhotoSelectorEngine {
     fun create(activity: Activity): PhotoSelectorEngine {
         intent = Intent(activity, PhotoSelectActivity::class.java)
         this.activity = activity
+        this.fragment=null
         return this
     }
 
     fun create(fragment: Fragment): PhotoSelectorEngine {
         intent = Intent(fragment.activity, PhotoSelectActivity::class.java)
         this.fragment = fragment
+        this.activity=null
         return this
     }
 
