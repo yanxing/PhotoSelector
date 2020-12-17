@@ -92,6 +92,7 @@ object PhotoSelectorEngine {
      * 启动选择器后，在onActivityResult中接收选择的图片/视频
      */
     fun getResult(data: Intent?): ArrayList<Photo>? {
+        onDestroy()
         return data?.getParcelableArrayListExtra(PHOTO_KEY)
     }
 
@@ -111,7 +112,13 @@ object PhotoSelectorEngine {
      * 启动相机拍照后，在onActivityResult中接收拍的照片
      */
     fun getResult(): Photo? {
+        onDestroy()
         return Photo(uri)
+    }
+
+    private fun onDestroy(){
+        this.fragment=null
+        this.activity=null
     }
 
 }
