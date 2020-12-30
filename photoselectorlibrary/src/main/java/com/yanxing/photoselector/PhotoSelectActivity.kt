@@ -223,12 +223,12 @@ class PhotoSelectActivity : AppCompatActivity() {
         photoRecyclerView.adapter = photoAdapter
         photoAdapter.setOnItemClick { viewHolder, position ->
             currentPhotoList[position].apply {
-                //多选
-                if (selectMultiple) {
-                    //点击是相机
-                    if (type == -1) {
-                        takePhotoImage = TakePhotoUtil.takePhoto(this@PhotoSelectActivity,TakePhotoUtil.TAKE_PHOTO)
-                    } else {
+                //点击是相机
+                if(type==-1){
+                    takePhotoImage = TakePhotoUtil.takePhoto(this@PhotoSelectActivity,TakePhotoUtil.TAKE_PHOTO)
+                }else{
+                    //多选
+                    if (selectMultiple) {
                         viewHolder.itemView.state.let {
                             if (select) {
                                 photoSelectedList.remove(this)
@@ -245,14 +245,13 @@ class PhotoSelectActivity : AppCompatActivity() {
                             select = !select
                             photoAdapter.notifyDataSetChanged()
                         }
+                    }else{
+                        photoSelectedList.add(this)
+                        val intent = Intent()
+                        intent.putParcelableArrayListExtra(PHOTO_KEY, photoSelectedList)
+                        setResult(Activity.RESULT_OK, intent)
+                        finish()
                     }
-                }else{
-                    //单选
-                    photoSelectedList.add(this)
-                    val intent = Intent()
-                    intent.putParcelableArrayListExtra(PHOTO_KEY, photoSelectedList)
-                    setResult(Activity.RESULT_OK, intent)
-                    finish()
                 }
             }
         }
