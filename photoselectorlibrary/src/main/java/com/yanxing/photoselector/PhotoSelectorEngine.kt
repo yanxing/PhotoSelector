@@ -22,6 +22,11 @@ object PhotoSelectorEngine {
      */
     const val REQUEST_PHOTO_CODE=1000
 
+    /**
+     * 拍照请求码
+     */
+    const val TAKE_PHOTO = 1001
+
     fun create(activity: Activity): PhotoSelectorEngine {
         intent = Intent(activity, PhotoSelectActivity::class.java)
         this.activity = activity
