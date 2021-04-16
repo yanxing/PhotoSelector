@@ -77,7 +77,6 @@ class PhotoSelectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_select)
-        //RoomUtil.init(this)
         setPhotoConfig()
         initView()
         checkPermission()
