@@ -50,9 +50,9 @@ class PhotoSelectActivity : AppCompatActivity() {
     private var loadMediaType = 1
 
     /**
-     * 限制选择视频时长
+     * 过滤视频时长，默认-1不过滤
      */
-    private var limitVideoDuration = 12
+    private var limitVideoDuration=-1
     private val QUESTION_AUTH = 1
 
     /**
@@ -77,6 +77,7 @@ class PhotoSelectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo_select)
+        //RoomUtil.init(this)
         setPhotoConfig()
         initView()
         checkPermission()
@@ -91,7 +92,7 @@ class PhotoSelectActivity : AppCompatActivity() {
             selectMultiple = getBooleanExtra(SELECT_MODE, false)
             maxNumber = getIntExtra(MAX_NUM, 9)
             loadMediaType = getIntExtra(LOAD_MEDIA_TYPE, 1)
-            limitVideoDuration = getIntExtra(LIMIT_VIDEO_DURATION, 12)
+            limitVideoDuration = getIntExtra(LIMIT_VIDEO_DURATION, -1)
             //校验传入的参数
             if (loadMediaType != 0 && loadMediaType != 1 && loadMediaType != 2) {
                 loadMediaType = 1
@@ -101,9 +102,6 @@ class PhotoSelectActivity : AppCompatActivity() {
                     maxNumber = 9
                 }
                 confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
-            }
-            if (limitVideoDuration < 1) {
-                limitVideoDuration = 12
             }
             when (loadMediaType) {
                 0 -> {

@@ -21,10 +21,6 @@ object PhotoSelectorEngine {
      * 请求启动图片/视频选择器
      */
     const val REQUEST_PHOTO_CODE=1000
-    /**
-     * 拍照请求码
-     */
-    const val TAKE_PHOTO = 1001
 
     fun create(activity: Activity): PhotoSelectorEngine {
         intent = Intent(activity, PhotoSelectActivity::class.java)

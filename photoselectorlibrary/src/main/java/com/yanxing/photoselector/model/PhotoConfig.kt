@@ -25,7 +25,7 @@ const val MAX_NUM="max_num"
  */
 const val LOAD_MEDIA_TYPE="media_type"
 /**
- * 是否限制选择视频时长，单位秒，默认限制,视频时有效
+ * 是否限制选择视频时长，单位秒，默认不限制,视频时有效
  */
 const val LIMIT_VIDEO_DURATION="video_duration"
 

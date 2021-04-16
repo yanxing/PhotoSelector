@@ -9,7 +9,9 @@ import android.util.ArrayMap
 import androidx.annotation.RequiresApi
 import com.yanxing.photoselector.model.Photo
 import com.yanxing.photoselector.model.PhotoFolder
+import com.yanxing.photoselector.model.VideoCache
 import java.io.File
+
 
 /**
  * 查询图片/视频
@@ -23,18 +25,18 @@ import java.io.File
  */
 fun getPhotos(context: Context, type: Int = 1): ArrayList<PhotoFolder> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        getNewPhotos(context, type,null)
+        getNewPhotos(context, type,-1)
     } else {
-        getOldPhotos(context, type,null)
+        getOldPhotos(context, type,-1)
     }
 }
 
 /**
  * 兼容方式获取图片/视频
  * @param type 加载媒体类型（只支持图片视频），0全部，1图片，2视频，默认1只加载图片
- * @param videoDuration 对视频时长过滤，秒
+ * @param videoDuration 对视频时长过滤，单位秒，-1不过滤
  */
-fun getPhotos(context: Context, type: Int = 1,videoDuration:Int?): ArrayList<PhotoFolder> {
+fun getPhotos(context: Context, type: Int = 1,videoDuration:Int): ArrayList<PhotoFolder> {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         getNewPhotos(context, type,videoDuration)
     } else {
@@ -46,7 +48,7 @@ fun getPhotos(context: Context, type: Int = 1,videoDuration:Int?): ArrayList<Pho
  * AndroidQ方式获取图片/视频
  */
 @RequiresApi(Build.VERSION_CODES.Q)
-private fun getNewPhotos(context: Context, type: Int,videoDuration:Int?): ArrayList<PhotoFolder> {
+private fun getNewPhotos(context: Context, type: Int,videoDuration:Int): ArrayList<PhotoFolder> {
     val allPhotoKey = when (type) {
         0 -> {
             "图片和视频"
@@ -108,10 +110,18 @@ private fun getNewPhotos(context: Context, type: Int,videoDuration:Int?): ArrayL
         }
     }
     if (type == 0 || type == 2) {
+        //查询缓存的视频时长
+        val videoCacheMap=ArrayMap<String,VideoCache>()
+        RoomUtil.init(context)
+        val videoCacheList=RoomUtil.mRoomDataBase.getVideoCacheDao().findAll()
+        for (videoCache in videoCacheList){
+            videoCacheMap[videoCache.path] = videoCache
+        }
         //查询视频
         val photoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val contentResolver = context.contentResolver
         try {
+            val a=System.currentTimeMillis()
             val cursor = contentResolver.query(
                 photoUri, arrayOf(
                     MediaStore.Video.Media._ID,
@@ -129,12 +139,21 @@ private fun getNewPhotos(context: Context, type: Int,videoDuration:Int?): ArrayL
                 //视频路径
                 val videoUri =Uri.parse(MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString() + File.separator + id)
                 val videoPath =cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.RELATIVE_PATH))
-                val mmr = MediaMetadataRetriever()
-                mmr.setDataSource(context, videoUri)
-                val duration =mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
-                val durationInt=(duration.toLong()/1000).toInt()
+                var durationInt=0
+                if (videoCacheMap.contains(videoUri.path)){
+                    durationInt=videoCacheMap[videoUri.path]?.duration!!
+                }else{
+                    //没有缓存此视频的时长，重新计算，下面代码比较耗时，cursor.getColumnIndex(MediaStore.Video.Media.DURATION)查不到
+                    val mmr = MediaMetadataRetriever()
+                    mmr.setDataSource(context, videoUri)
+                    //时长(毫秒)
+                    val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    durationInt = (duration.toLong() / 1000).toInt()
+                    val videoCache=VideoCache(videoUri.path!!,durationInt)
+                    RoomUtil.mRoomDataBase.getVideoCacheDao().insert(videoCache)
+                }
                 //时长大于限制
-                if (videoDuration!=null&&durationInt>videoDuration){
+                if (videoDuration != -1 && durationInt > videoDuration) {
                     continue
                 }
                 //这个文件夹下有视频了
@@ -174,7 +193,7 @@ private fun getNewPhotos(context: Context, type: Int,videoDuration:Int?): ArrayL
 /**
  * AndroidQ以前版本获取图片/视频
  */
-private fun getOldPhotos(context: Context, type: Int,videoDuration:Int?): ArrayList<PhotoFolder> {
+private fun getOldPhotos(context: Context, type: Int,videoDuration:Int): ArrayList<PhotoFolder> {
     val allPhotoKey = when (type) {
         0 -> {
             "图片和视频"
@@ -238,6 +257,13 @@ private fun getOldPhotos(context: Context, type: Int,videoDuration:Int?): ArrayL
         }
     }
     if (type == 0 || type == 2) {
+        //查询缓存的视频时长
+        val videoCacheMap=ArrayMap<String,VideoCache>()
+        RoomUtil.init(context)
+        val videoCacheList=RoomUtil.mRoomDataBase.getVideoCacheDao().findAll()
+        for (videoCache in videoCacheList){
+            videoCacheMap[videoCache.path] = videoCache
+        }
         //查询视频
         val photoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val contentResolver = context.contentResolver
@@ -260,12 +286,20 @@ private fun getOldPhotos(context: Context, type: Int,videoDuration:Int?): ArrayL
                 //视频路径
                 val videoUri = FileUriUtil.getFileToUri(context, pathFile, 2)
                 val videoPath =if (pathFile.parentFile == null) "" else pathFile.parentFile?.absolutePath
-                val mmr = MediaMetadataRetriever()
-                mmr.setDataSource(context, videoUri)
-                val duration =mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
-                val durationInt=(duration.toLong()/1000).toInt()
+                var durationInt=0
+                if (videoCacheMap.contains(videoUri.path)){
+                    durationInt=videoCacheMap[videoUri.path]?.duration!!
+                }else{
+                    //没有缓存此视频的时长，重新计算，下面代码比较耗时，cursor.getColumnIndex(MediaStore.Video.Media.DURATION)查不到
+                    val mmr = MediaMetadataRetriever()
+                    mmr.setDataSource(context, videoUri)
+                    val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
+                    durationInt = (duration.toLong() / 1000).toInt()
+                    val videoCache=VideoCache(videoUri.path!!,durationInt)
+                    RoomUtil.mRoomDataBase.getVideoCacheDao().insert(videoCache)
+                }
                 //时长大于限制
-                if (videoDuration!=null&&durationInt>videoDuration){
+                if (videoDuration!=-1&&durationInt>videoDuration){
                     continue
                 }
                 //这个文件夹下有视频了

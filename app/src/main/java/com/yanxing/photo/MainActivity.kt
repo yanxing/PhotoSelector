@@ -16,10 +16,9 @@ class MainActivity : AppCompatActivity() {
         text.setOnClickListener {
             PhotoSelectorEngine
                 .create(this)
-                .setShowCamera(true)
+                .setShowCamera(false)
                 .setSelectMultiple(true)
-                .setLoadMediaType(0)
-                .setLimitVideoDuration(30)
+                .setLoadMediaType(2)
                 .start(PhotoSelectorEngine.REQUEST_PHOTO_CODE)
         }
     }
