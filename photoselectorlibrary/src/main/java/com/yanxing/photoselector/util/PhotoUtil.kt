@@ -1,7 +1,6 @@
 package com.yanxing.photoselector.util
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -9,7 +8,6 @@ import android.util.ArrayMap
 import androidx.annotation.RequiresApi
 import com.yanxing.photoselector.model.Photo
 import com.yanxing.photoselector.model.PhotoFolder
-import com.yanxing.photoselector.model.VideoCache
 import java.io.File
 
 
@@ -110,13 +108,6 @@ private fun getNewPhotos(context: Context, type: Int, limitVideoDuration:Int): A
         }
     }
     if (type == 0 || type == 2) {
-        //查询缓存的视频时长
-        val videoCacheMap=ArrayMap<String,VideoCache>()
-        RoomUtil.init(context)
-        val videoCacheList=RoomUtil.mRoomDataBase.getVideoCacheDao().findAll()
-        for (videoCache in videoCacheList){
-            videoCacheMap[videoCache.path] = videoCache
-        }
         //查询视频
         val photoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val contentResolver = context.contentResolver
@@ -126,6 +117,7 @@ private fun getNewPhotos(context: Context, type: Int, limitVideoDuration:Int): A
                 photoUri, arrayOf(
                     MediaStore.Video.Media._ID,
                     MediaStore.Video.Media.DATE_MODIFIED,
+                    MediaStore.Video.Media.DURATION,
                     MediaStore.Video.Media.RELATIVE_PATH,
                     MediaStore.Video.Media.DISPLAY_NAME
                 ), MediaStore.Video.Media.MIME_TYPE + "=?",
@@ -139,19 +131,7 @@ private fun getNewPhotos(context: Context, type: Int, limitVideoDuration:Int): A
                 //视频路径
                 val videoUri =Uri.parse(MediaStore.Video.Media.EXTERNAL_CONTENT_URI.toString() + File.separator + id)
                 val videoPath =cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.RELATIVE_PATH))
-                var videoDuration=0
-                if (videoCacheMap.contains(videoUri.path)){
-                    videoDuration=videoCacheMap[videoUri.path]?.duration!!
-                }else{
-                    //没有缓存此视频的时长，重新计算，下面代码比较耗时，cursor.getColumnIndex(MediaStore.Video.Media.DURATION)查不到
-                    val mmr = MediaMetadataRetriever()
-                    mmr.setDataSource(context, videoUri)
-                    //时长(毫秒)
-                    val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                    videoDuration = (duration.toLong() / 1000).toInt()
-                    val videoCache=VideoCache(videoUri.path!!,videoDuration)
-                    RoomUtil.mRoomDataBase.getVideoCacheDao().insert(videoCache)
-                }
+                val videoDuration=(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))/1000).toInt()
                 //时长大于限制
                 if (limitVideoDuration != -1 && videoDuration > limitVideoDuration) {
                     continue
@@ -257,13 +237,6 @@ private fun getOldPhotos(context: Context, type: Int, limitVideoDuration:Int): A
         }
     }
     if (type == 0 || type == 2) {
-        //查询缓存的视频时长
-        val videoCacheMap=ArrayMap<String,VideoCache>()
-        RoomUtil.init(context)
-        val videoCacheList=RoomUtil.mRoomDataBase.getVideoCacheDao().findAll()
-        for (videoCache in videoCacheList){
-            videoCacheMap[videoCache.path] = videoCache
-        }
         //查询视频
         val photoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val contentResolver = context.contentResolver
@@ -271,6 +244,7 @@ private fun getOldPhotos(context: Context, type: Int, limitVideoDuration:Int): A
             val cursor = contentResolver.query(
                 photoUri, arrayOf(
                     MediaStore.Video.Media.DATE_MODIFIED,
+                    MediaStore.Video.Media.DURATION,
                     MediaStore.Video.Media.DISPLAY_NAME
                 ), MediaStore.Video.Media.MIME_TYPE + "=?",
                 arrayOf("video/mp4"), MediaStore.Video.Media.DATE_MODIFIED + " desc"
@@ -286,18 +260,7 @@ private fun getOldPhotos(context: Context, type: Int, limitVideoDuration:Int): A
                 //视频路径
                 val videoUri = FileUriUtil.getFileToUri(context, pathFile, 2)
                 val videoPath =if (pathFile.parentFile == null) "" else pathFile.parentFile?.absolutePath
-                var videoDuration=0
-                if (videoCacheMap.contains(videoUri.path)){
-                    videoDuration=videoCacheMap[videoUri.path]?.duration!!
-                }else{
-                    //没有缓存此视频的时长，重新计算，下面代码比较耗时，cursor.getColumnIndex(MediaStore.Video.Media.DURATION)查不到
-                    val mmr = MediaMetadataRetriever()
-                    mmr.setDataSource(context, videoUri)
-                    val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION) //时长(毫秒)
-                    videoDuration = (duration.toLong() / 1000).toInt()
-                    val videoCache=VideoCache(videoUri.path!!,videoDuration)
-                    RoomUtil.mRoomDataBase.getVideoCacheDao().insert(videoCache)
-                }
+                val videoDuration=(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION))/1000).toInt()
                 //时长大于限制
                 if (limitVideoDuration!=-1&&videoDuration>limitVideoDuration){
                     continue
