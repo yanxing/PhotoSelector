@@ -112,7 +112,6 @@ private fun getNewPhotos(context: Context, type: Int, limitVideoDuration:Int): A
         val photoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val contentResolver = context.contentResolver
         try {
-            val a=System.currentTimeMillis()
             val cursor = contentResolver.query(
                 photoUri, arrayOf(
                     MediaStore.Video.Media._ID,
