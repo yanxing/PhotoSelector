@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import com.yanxing.photoselector.model.Photo
 import com.yanxing.photoselector.model.PhotoFolder
 import java.io.File
+import kotlin.collections.ArrayList
 
 
 /**
@@ -140,6 +141,15 @@ private fun getNewPhotos(context: Context, type: Int, limitVideoDuration:Int): A
                     val photo = Photo(videoUri, 2, videoDuration, updateTime)
                     photoFolderMap[videoPath]?.photos?.add(photo)
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
+                    //图片和视频都有，要重新排个序
+                    if (type == 0) {
+                        photoFolderMap[videoPath]?.photos?.sortByDescending {
+                            it.time
+                        }
+                        photoFolderMap[allPhotoKey]?.photos?.sortByDescending {
+                            it.time
+                        }
+                    }
                     continue
                 } else {
                     //还没有这个文件夹
@@ -149,6 +159,15 @@ private fun getNewPhotos(context: Context, type: Int, limitVideoDuration:Int): A
                     photoFolder.name = videoPath
                     photoFolderMap[videoPath] = photoFolder
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
+                    //图片和视频都有，要重新排个序
+                    if (type == 0) {
+                        photoFolder.photos.sortByDescending {
+                            it.time
+                        }
+                        photoFolderMap[allPhotoKey]?.photos?.sortByDescending {
+                            it.time
+                        }
+                    }
                 }
             }
             cursor.close()
@@ -269,6 +288,15 @@ private fun getOldPhotos(context: Context, type: Int, limitVideoDuration:Int): A
                     val photo = Photo(videoUri, 2, videoDuration,updateTime)
                     photoFolderMap[videoPath]?.photos?.add(photo)
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
+                    //图片和视频都有，要重新排个序
+                    if (type == 0) {
+                        photoFolderMap[videoPath]?.photos?.sortByDescending {
+                            it.time
+                        }
+                        photoFolderMap[allPhotoKey]?.photos?.sortByDescending {
+                            it.time
+                        }
+                    }
                     continue
                 } else {
                     //还没有这个文件夹
@@ -278,6 +306,15 @@ private fun getOldPhotos(context: Context, type: Int, limitVideoDuration:Int): A
                     photoFolder.name = videoPath!!
                     photoFolderMap[videoPath] = photoFolder
                     photoFolderMap[allPhotoKey]?.photos?.add(photo)
+                    //图片和视频都有，要重新排个序
+                    if (type == 0) {
+                        photoFolder.photos.sortByDescending {
+                            it.time
+                        }
+                        photoFolderMap[allPhotoKey]?.photos?.sortByDescending {
+                            it.time
+                        }
+                    }
                 }
             }
             cursor.close()

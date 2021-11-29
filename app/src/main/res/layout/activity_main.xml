@@ -12,9 +12,19 @@
         android:layout_height="wrap_content"
         android:text="打开图片/视频选择器"
         android:textSize="18sp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/image" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

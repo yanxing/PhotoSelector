@@ -22,12 +22,7 @@ data class Photo(
     /**
      * 记录选中
      */
-    var select:Boolean=false):Comparable<Photo>, Parcelable {
-
-    //按照时间排序
-    override fun compareTo(other: Photo): Int {
-        return (this.time-other.time).toInt()
-    }
+    var select:Boolean=false): Parcelable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
