@@ -9,6 +9,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -261,6 +262,19 @@ public class FileUriUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * 获取Uri文件的真实名称，Build.VERSION.SDK_INT >= 19（Android4.4）有效
+     * @param context
+     * @param fileUri
+     * @return
+     */
+    public static String getFileRealNameFromUri(Context context, Uri fileUri) {
+        if (context == null || fileUri == null) return null;
+        DocumentFile documentFile = DocumentFile.fromSingleUri(context, fileUri);
+        if (documentFile == null) return null;
+        return documentFile.getName();
     }
 
     /**
