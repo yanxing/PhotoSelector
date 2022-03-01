@@ -269,14 +269,14 @@ public class FileUriUtil {
      * @param filePath path
      * @return boolean true or false
      */
-    public static boolean copyFileToDir(Context context, String uri, String filePath) {
+    public static boolean copyFileToDir(Context context, Uri uri, String filePath) {
 
         File file = null;
         ParcelFileDescriptor parcelFd = null;
         BufferedInputStream bin = null;
         BufferedOutputStream bot = null;
         try {
-            parcelFd = context.getContentResolver().openFileDescriptor(Uri.parse(uri),
+            parcelFd = context.getContentResolver().openFileDescriptor(uri,
                     "r");
             ParcelFileDescriptor.AutoCloseInputStream inputStream = new ParcelFileDescriptor.AutoCloseInputStream(parcelFd);
             bin = new BufferedInputStream(inputStream);
