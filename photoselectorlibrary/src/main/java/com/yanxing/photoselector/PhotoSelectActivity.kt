@@ -11,17 +11,20 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Message
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
+import com.yanxing.photoselector.databinding.ActivityPhotoSelectBinding
 import com.yanxing.photoselector.model.*
 import com.yanxing.photoselector.util.PermissionUtil
 import com.yanxing.photoselector.util.TakePhotoUtil
 import com.yanxing.photoselector.util.getPhotos
-import kotlinx.android.synthetic.main.activity_photo_select.*
-import kotlinx.android.synthetic.main.item_photo.view.*
 
 /**
  * 图片/视频选择，兼容Android10存储权限
@@ -73,10 +76,12 @@ class PhotoSelectActivity : AppCompatActivity() {
     private lateinit var queryHandler: Handler
     private lateinit var photoAdapter: RecyclerViewAdapter<Photo>
     private var takePhotoImage: Uri? = null
+    private lateinit var binding:ActivityPhotoSelectBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_photo_select)
+        binding=ActivityPhotoSelectBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setPhotoConfig()
         initView()
         checkPermission()
@@ -100,50 +105,50 @@ class PhotoSelectActivity : AppCompatActivity() {
                 if (maxNumber > 9 || maxNumber < 1) {
                     maxNumber = 9
                 }
-                confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
+                binding.confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
             }
             when (loadMediaType) {
                 0 -> {
-                    tip.text="没有可用图片和视频"
+                    binding.tip.text="没有可用图片和视频"
                 }
                 1 -> {
-                    tip.text="没有可用图片"
+                    binding.tip.text="没有可用图片"
                 }
                 else -> {
-                    tip.text="没有可用视频"
+                    binding.tip.text="没有可用视频"
                 }
             }
         }
     }
 
     private fun initView() {
-        cancel.setOnClickListener {
+        binding.cancel.setOnClickListener {
             finish()
         }
         //单选
         if (!selectMultiple) {
-            confirm.visibility = View.GONE
+            binding.confirm.visibility = View.GONE
         }
         val popWindowFolder = PopWindowFolder()
         //点击标题，真是图片视频文件夹
-        titleTxt.setOnClickListener {
-            arrow.rotation = 0f
-            shape.visibility=View.VISIBLE
-            popWindowFolder.showFolder(this, titleTxt, allPhotoFolderList) {
+        binding.titleTxt.setOnClickListener {
+            binding.arrow.rotation = 0f
+            binding.shape.visibility=View.VISIBLE
+            popWindowFolder.showFolder(this, binding.titleTxt, allPhotoFolderList) {
                 if (it < allPhotoFolderList.size) {
-                    titleTxt.text = formatString(allPhotoFolderList[it].name)
+                    binding.titleTxt.text = formatString(allPhotoFolderList[it].name)
                     currentPhotoList.clear()
                     currentPhotoList.addAll(allPhotoFolderList[it].photos)
                     photoAdapter.update(currentPhotoList)
                 }
             }
             popWindowFolder.popupWindow.setOnDismissListener {
-                arrow.rotation = 180f
-                shape.visibility=View.GONE
+                binding.arrow.rotation = 180f
+                binding.shape.visibility=View.GONE
             }
         }
         //点击确定
-        confirm.setOnClickListener {
+        binding.confirm.setOnClickListener {
             if (photoSelectedList.size > 0) {
                 val intent = Intent()
                 intent.putParcelableArrayListExtra(PHOTO_KEY, photoSelectedList)
@@ -153,11 +158,16 @@ class PhotoSelectActivity : AppCompatActivity() {
         }
         //图片/视频适配器
         val width = (getScreenMetrics(this).widthPixels - dp2px(this, 2) * 5) / 4
-        photoRecyclerView.layoutManager = GridLayoutManager(this, 4)
-        (photoRecyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        binding.photoRecyclerView.layoutManager = GridLayoutManager(this, 4)
+        (binding.photoRecyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         photoAdapter = object : RecyclerViewAdapter<Photo>(currentPhotoList, R.layout.item_photo) {
             override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
                 super.onBindViewHolder(holder, position)
+                val cameraLayout=holder.findViewById<LinearLayout>(R.id.cameraLayout)
+                val image=holder.findViewById<ImageView>(R.id.image)
+                val video=holder.findViewById<ImageView>(R.id.video)
+                val videoDuration=holder.findViewById<TextView>(R.id.videoDuration)
+                val state=holder.findViewById<MaterialButton>(R.id.state)
                 mDataList[position].apply {
                     holder.itemView.apply {
                         //即使showCamera为true仅在全部图片里面显示相机
@@ -188,16 +198,19 @@ class PhotoSelectActivity : AppCompatActivity() {
                             videoDuration.visibility = View.GONE
                             video.visibility = View.GONE
                         }
-                    }.state.apply {
+                    }
+                    state.apply {
                         //单选或者相机占位
-                        if (type==-1||!selectMultiple){
-                            visibility=View.GONE
+                        if (type == -1 || !selectMultiple) {
+                            visibility = View.GONE
                             return
                         }
                         //已选择的
                         if (select) {
-                            backgroundTintList =ColorStateList.valueOf(resources.getColor(R.color.photo_selector_check))
-                            strokeColor = ColorStateList.valueOf(resources.getColor(R.color.photo_selector_check))
+                            backgroundTintList =
+                                ColorStateList.valueOf(resources.getColor(R.color.photo_selector_check))
+                            strokeColor =
+                                ColorStateList.valueOf(resources.getColor(R.color.photo_selector_check))
                             setTextColor(resources.getColor(android.R.color.white))
                             if (photoSelectedList.size > 0) {
                                 for (i in 0 until photoSelectedList.size) {
@@ -208,8 +221,10 @@ class PhotoSelectActivity : AppCompatActivity() {
                                 }
                             }
                         } else {
-                            backgroundTintList =ColorStateList.valueOf(resources.getColor(android.R.color.transparent))
-                            strokeColor =ColorStateList.valueOf(resources.getColor(android.R.color.white))
+                            backgroundTintList =
+                                ColorStateList.valueOf(resources.getColor(android.R.color.transparent))
+                            strokeColor =
+                                ColorStateList.valueOf(resources.getColor(android.R.color.white))
                             text = ""
                             setTextColor(resources.getColor(android.R.color.white))
                         }
@@ -217,7 +232,7 @@ class PhotoSelectActivity : AppCompatActivity() {
                 }
             }
         }
-        photoRecyclerView.adapter = photoAdapter
+        binding.photoRecyclerView.adapter = photoAdapter
         photoAdapter.setOnItemClick { viewHolder, position ->
             currentPhotoList[position].apply {
                 //点击是相机
@@ -226,14 +241,14 @@ class PhotoSelectActivity : AppCompatActivity() {
                 }else{
                     //多选
                     if (selectMultiple) {
-                        viewHolder.itemView.state.let {
+                        viewHolder.findViewById<MaterialButton>(R.id.state).let {
                             if (select) {
                                 photoSelectedList.remove(this)
-                                confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
+                                binding.confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
                             } else {
                                 if (photoSelectedList.size < maxNumber) {
                                     photoSelectedList.add(this)
-                                    confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
+                                    binding.confirm.text ="确定(" + photoSelectedList.size + "/" + maxNumber + ")"
                                 } else {
                                     showToast(applicationContext,"最多只能选择" + maxNumber.toString() + "个")
                                     return@apply
@@ -277,7 +292,7 @@ class PhotoSelectActivity : AppCompatActivity() {
      * 查询本地图片和视频
      */
     private fun getPhotoVideo() {
-        progressBar.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
         queryThread.start()
         queryHandler = object : Handler(queryThread.looper) {
             override fun handleMessage(msg: Message) {
@@ -288,23 +303,29 @@ class PhotoSelectActivity : AppCompatActivity() {
                     val photo = Photo(null, -1)
                     allPhotoFolderList[0].photos.add(0,photo)
                     if (allPhotoFolderList[0].photos.size<=1){
-                        tip.post {
-                            tip.visibility=View.VISIBLE
+                        binding.tip.apply {
+                            post {
+                                visibility=View.VISIBLE
+                            }
                         }
                     }
                 }else{
                     if (allPhotoFolderList[0].photos.size<1){
-                        tip.post {
-                            tip.visibility=View.VISIBLE
+                        binding.tip.apply {
+                            post {
+                                visibility=View.VISIBLE
+                            }
                         }
                     }
                 }
-                titleTxt.post {
-                    titleTxt.text = allPhotoFolderList[0].name
+                binding.titleTxt.apply {
+                    post {
+                        text = allPhotoFolderList[0].name
+                    }
                 }
                 currentPhotoList.addAll(allPhotoFolderList[0].photos)
-                photoRecyclerView.post { photoAdapter.notifyDataSetChanged() }
-                progressBar.post { progressBar.visibility = View.GONE }
+                binding.photoRecyclerView.post { photoAdapter.notifyDataSetChanged() }
+                binding.progressBar.apply {post { visibility = View.GONE }}
             }
         }
         queryHandler.sendEmptyMessage(0)

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
+import android.widget.ImageView
 import android.widget.PopupWindow
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,6 @@ import com.bumptech.glide.Glide
 import com.yanxing.photoselector.model.PhotoFolder
 import com.yanxing.photoselector.model.formatString
 import com.yanxing.photoselector.model.getScreenMetrics
-import kotlinx.android.synthetic.main.item_popwindow_folder.view.*
 
 /**
  * 文件夹列表
@@ -43,7 +43,7 @@ class PopWindowFolder {
                     super.onBindViewHolder(holder, position)
                     mDataList[position].apply {
                         holder.itemView.apply {
-                            image.apply {
+                            holder.findViewById<ImageView>(R.id.image).apply {
                                 visibility = if (photos.size > 0) {
                                     //第一个可能是相机图标
                                     if (photos[0].path==null){
@@ -58,7 +58,8 @@ class PopWindowFolder {
                                     View.GONE
                                 }
                             }
-                        }.state.apply {
+                        }
+                        holder.findViewById<ImageView>(R.id.state).apply {
                             visibility = if (selected) {
                                 selectPosition = position
                                 View.VISIBLE

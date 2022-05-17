@@ -6,7 +6,7 @@ buildscript {
     ext.COMPILE_SDK_VERSION = 29
     // targetSdkVersion
     ext.TARGET_SDK_VERSION = 29
-    ext.kotlin_version = "1.4.10"
+    ext.kotlin_version = "1.6.21"
     repositories {
         google()
         jcenter()

@@ -2,8 +2,7 @@ package com.yanxing.photoselector.model
 
 import android.net.Uri
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
+import kotlinx.parcelize.Parcelize
 /**
  * @author 李双祥 on 2020/11/9.
  */
